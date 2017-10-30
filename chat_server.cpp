@@ -113,6 +113,7 @@ public:
   {
 
   }
+
   std::vector<std::string> request_users()
   {
     int i = 0;
@@ -127,11 +128,13 @@ public:
     }
     return tmp;
   }
-  int user_uuid(int i)
+
+  int user_uuid(int i)                                                        //user_uuid()
   {
     return user_list[i].get_uuid();
   }
-  std::string user_nick(int i)
+
+  std::string user_nick(int i)                                                //user_nick()
   {
     return user_list[i].get_nick();
   }
@@ -139,7 +142,9 @@ public:
 private:
 };
 
-class chatroom
+//----------------------------------------------------------------------------------------------------------
+
+class chatrooms                             // Will get moved to class chat_room
 {
 public:
   void message_backlog(std::string message) //read from the vector from the last element to the first element
@@ -160,7 +165,7 @@ private:
   std::vector<std::string> messages;
 };
 
-
+//-------------------------------------------------------------------------------------------------------------
 
 class chat_room
 {

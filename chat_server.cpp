@@ -49,6 +49,7 @@ typedef std::shared_ptr<chat_participant> chat_participant_ptr;
 class users
 {
 public:
+  users(int u_uuid, std::string u_nick) : uuid(u_uuid), nickname(u_nick) {}
   int get_uuid()
   {
     return uuid;
@@ -61,10 +62,10 @@ public:
   {
     uuid = num;
   }
-  //void mute_user(std::string name)
-  //{
-  //  muted_list.push_back(name);
-  //}
+  void mute_user(std::string name)
+  {
+    muted_list.push_back(name);
+  }
 
 private:
   int uuid;
@@ -111,6 +112,28 @@ public:
   void create_chatroom(std::string name)
   {
 
+  }
+  std::vector<std::string> request_users()
+  {
+    int i = 0;
+    std::string return_value;
+    std::vector<std::string> tmp;
+    while (i < user_list.size())
+    {
+      int uuid = user_uuid(i);
+      std::string nick = user_nick(i);
+      return_value = std::to_string(uuid) + ',' + nick;
+      tmp.push_back(return_value);
+    }
+    return tmp;
+  }
+  int user_uuid(int i)
+  {
+    return user_list[i].get_uuid();
+  }
+  std::string user_nick(int i)
+  {
+    return user_list[i].get_nick();
   }
 
 private:

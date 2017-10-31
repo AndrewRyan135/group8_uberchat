@@ -1,6 +1,8 @@
 Document that will list your tasks for the assignment.
 
+------------------------------------------------------------------------------------------------------------------------------------------
 10-31-17
+                  Task List
   1. All clients shall have their own nickname and UUID
   2. Client shall be able to request a UUID
   3. Client shall be able to change their nickname
@@ -19,8 +21,6 @@ Document that will list your tasks for the assignment.
   16. Admin shall be able to change the name of a chat room
   17. Admin shall be able to kick a user from a chatroom.
   18. The client shall be able to unmute a muted user.
-
-
 
 ------------------------------------------------------------------------------------------------------------------------------------------
 10-16-17

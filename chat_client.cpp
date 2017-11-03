@@ -155,33 +155,84 @@ int main(int argc, char* argv[])
       std::string cmd = line;
       //request uuid
       if(cmd.compare("REQUUID") == 0){
+        
+        //truncate "NICK " from string
+        std::string input = cmd.substr(5,cmd.length()-5);
+            
+        //debugger print for input after space
+        //std::cout<<"Actual input: "<<input<<'\n';
 
-      //set nickname
-      }else if(cmd.substr(0,4).compare("NICK")==0
-            && cmd.substr(4,1).compare(" ")==0){
-
+        //check if new nickname is > 10
+        if(input.length()>10){
+          std::cout<<"Error! Nickname cannot exceed 10 characters"<<'\n';
+        }else{
+          //debugger print
+          //std::cout<<input.length()<<'\n';
+          //std::cout<<"NICK ran successfully"<<'\n';
+        }
+      //request list of available chatroom
       }else if(cmd.compare("REQCHATROOMS")==0){
+        //debugger print
+        std::cout<<"REQUSERS ran successfully"<<'\n';
 
-      //rename chatroom
-      }else if(cmd.substr(0,12).compare("NAMECHATROOM")==0
-            && cmd.substr(12,1).compare(" ")==0){
+        //rename chatroom
+      }else if(cmd.substr(0,13).compare("NAMECHATROOM ")==0){
+        //debugger print
+        std::cout<<"NAMECHATROOM ran successfully"<<'\n';
+
+        //truncate "NAMECHATROOM " from string
+        std::string input = cmd.substr(13,cmd.length()-13);
+
+        //debugger print for input after space
+        //std::cout<<"Actual input: "<<input<<'\n';
 
       //send a text
-      }else if(cmd.substr(0,8).compare("SENDTEXT")==0
-            && cmd.substr(8,1).compare(" ")==0){
+      }else if(cmd.substr(0,9).compare("SENDTEXT ")==0){
+        //debugger print
+        //std::cout<<"SENDTEXT ran successfully"<<'\n';
+          
+        //truncate "SENDTEXT " from string
+        std::string input = cmd.substr(9,cmd.length()-9);
+        
+        //debugger print for input after space
+        //std::cout<<"Actual input: "<<input<<'\n';
 
-            chat_message msg;
-            msg.body_length(std::strlen(line));
-            std::memcpy(msg.body(), line, msg.body_length());
-            msg.encode_header();
-            c.write(msg);
-      //request tex
+        //check for ; in text
+        if(cmd.find(";") != std::string::npos){
+        std::cout<<"Error! Message cannot contain ';' in it"<<'\n';   
+        }
+        //finally if conditions are all met send message
+        else{ 
+          //change input from string to char*
+          const char *message = input.c_str();
+
+          //messaging part
+          chat_message msg;
+          msg.body_length(std::strlen(message));
+          std::memcpy(msg.body(), message, msg.body_length());
+          msg.encode_header();
+          c.write(msg);
+
+          //original messaging without truncating "SENDTEXT"
+      /*  chat_message msg;
+          msg.body_length(std::strlen(line));
+          std::memcpy(msg.body(), line, msg.body_length());
+          msg.encode_header();
+          c.write(msg); */
+        }
+
+      //request text
       }else if(cmd.compare("REQTEXT")==0){
+      //debugger print
+      std::cout<<"REQTEXT ran successfully"<<'\n';
+
 
       //request users in chatroom
       }else if(cmd.compare("REQUSERS")==0){
+      //debugger print
+      std::cout<<"REQUSERS ran successfully"<<'\n';
 
-      }else if(cmd.compare("Help")==0){
+      }else if(cmd.compare("HELP")==0){
             std::cout<<"Type:         Followed by:          To:"<<'\n';
             std::cout<<"REQUUID       (nothing)             request a user ID"<<'\n';
             std::cout<<"NICK          (desired nickname)    display as your nickname"<<'\n';
@@ -190,7 +241,7 @@ int main(int argc, char* argv[])
             std::cout<<"SENDTEXT      (message)             send message to all in chatroom"<<'\n';
             std::cout<<"REQTEXT       (nothing)             request text since last time REQTEXT was used"<<'\n';
             std::cout<<"REQUSERS      (nothing)             request all user's nickname in chatroom"<<'\n';
-            std::cout<<"Help          (nothing)             show help menu"<<'\n';
+            std::cout<<"HELP          (nothing)             show help menu"<<'\n';
       }
       else{
         std::cout<<"Error! Your entry does not fit the standard format."<<'\n';

@@ -22,6 +22,7 @@
 #include <utility>
 #include <boost/asio.hpp>
 #include <string.h>
+#include "chat_server.h"
 #include "chat_message.hpp"
 
 using boost::asio::ip::tcp;
@@ -46,47 +47,56 @@ typedef std::shared_ptr<chat_participant> chat_participant_ptr;
 
 //----------------------------------------------------------------------
 
-class users
-{
-public:
-  users(int u_uuid, std::string u_nick) : uuid(u_uuid), nickname(u_nick) {}
-  int get_uuid()
+
+  users :: users(int u_uuid, std::string u_nick) : uuid(u_uuid), nickname(u_nick) {}
+  int users :: get_uuid()
   {
     return uuid;
   }
-  std::string get_nick()
+  std::string users :: get_nick()
   {
     return nickname;
   }
-  void set_uuid(int num)
+  void users :: set_nick(std::string name)
+  {
+    nickname = name;
+  }
+  void users :: set_uuid(int num)
   {
     uuid = num;
   }
-  void mute_user(std::string name)
+  void users :: mute_user(std::string name)
   {
     muted_list.push_back(name);
   }
 
-private:
-  int uuid;
-  std::string nickname;
-  std::vector<std::string> muted_list;
-};
 
-
-std::vector<std::string> chatrooms;
+std::vector<std::string> chatrooms_list;
 std::vector<int> uuid_vector;
 std::vector<users> user_list;
 //------------------------------------------------------------------
 
-class command_handeling
-{
-public:
-  void nickname_handle()
+  std::string command_handling :: nickname_handle(int uuid)
   {
-    //Will be calling a function created once the client server implamentation is created
+    for (int i = 0; i < user_list.size(); i++)
+    {
+      if (user_list[i].get_uuid() == uuid)
+      {
+        return user_list[i].get_nick();
+      }
+    }
   }
-  int requuid_handle()
+  void command_handling :: change_nick(int uuid, std::string name)
+  {
+    for (int i = 0; i < user_list.size(); i++)
+    {
+      if (user_list[i].get_uuid() == uuid)
+      {
+        user_list[i].set_nick(name);
+      }
+    }
+  }
+  int command_handling :: requuid_handle()
   {
     bool val = false;
     int num = 0000;
@@ -105,16 +115,16 @@ public:
     }
     return num; 
   }
-  std::vector<std::string> chatroom_handle() //Will provide the vector containing the names of the chat rooms
+  std::vector<std::string> command_handling :: chatroom_handle() //Will provide the vector containing the names of the chat rooms
   {
-    return chatrooms;
+    return chatrooms_list;
   }
-  void create_chatroom(std::string name)
+  void command_handling :: create_chatroom(std::string name)
   {
 
   }
 
-  std::vector<std::string> request_users()
+  std::vector<std::string> command_handling :: request_users()
   {
     int i = 0;
     std::string return_value;
@@ -129,24 +139,25 @@ public:
     return tmp;
   }
 
-  int user_uuid(int i)                                                        //user_uuid()
+  int command_handling :: user_uuid(int i)                                                        //user_uuid()
   {
     return user_list[i].get_uuid();
   }
 
-  std::string user_nick(int i)                                                //user_nick()
+  std::string command_handling :: user_nick(int i)                                                //user_nick()
   {
     return user_list[i].get_nick();
   }
 
-private:
-};
 
 //----------------------------------------------------------------------------------------------------------
 
 class chatrooms                             // Will get moved to class chat_room
 {
 public:
+  chatrooms(bool in_private_id, std::string in_name) : private_id(in_private_id), name(in_name) {
+    chatrooms_list.push_back(in_name);
+  }
   void message_backlog(std::string message) //read from the vector from the last element to the first element
   {
     if (messages.size() < 101)
@@ -157,10 +168,21 @@ public:
     {
       messages.erase(messages.begin()+0);
     }
-    
   }
+    std::string get_name()
+    {
+      return name;
+    }
+    bool is_private()
+    {
+      return private_id;
+    }
+  
+
 
 private:
+  bool private_id;
+  std::string name;
   std::vector<users> chatroom_users;
   std::vector<std::string> messages;
 };
@@ -357,4 +379,3 @@ int main(int argc, char* argv[])
 
   return 0;
 }
-

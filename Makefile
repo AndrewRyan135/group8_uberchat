@@ -3,7 +3,7 @@ CPPFLAGS = -Wall -O0 -g -std=c++11
 
 all: chat_server chat_client client_gui
 
-chat_server: chat_server.cpp chat_message.hpp
+chat_server: chat_server.cpp chat_message.hpp chat_server.h
 		g++ ${CPPFLAGS} -o chat_server chat_server.cpp \
 			-lboost_system
 chat_client: chat_client.cpp chat_message.hpp

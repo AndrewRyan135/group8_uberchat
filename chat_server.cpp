@@ -139,8 +139,15 @@ private:
         boost::asio::buffer(read_msg_.body(), read_msg_.body_length()),
         [this, self](boost::system::error_code ec, std::size_t /*length*/)
         {
+          
           if (!ec)
           {
+            std::stringstream buffer;
+            //std::streambuf* old = std::cout.rdbuf(buffer.rdbuf());
+            buffer.write(read_msg_.body(), read_msg_.body_length());
+            //std::cout << "\n";
+            std::string text = buffer.str();
+            std::cout << buffer.str() <<std::endl;
             room_.deliver(read_msg_);
             do_read_header();
           }

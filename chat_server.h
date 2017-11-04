@@ -7,9 +7,7 @@
 #include <cstdlib>
 
 
-std::vector<std::string> chatrooms_list;
-std::vector<int> uuid_vector;
-std::vector<users> user_list;
+
 
 class users
 {
@@ -18,7 +16,7 @@ private:
   std::string nickname;
   std::vector<std::string> muted_list;
 public:
-	users :: users(int u_uuid, std::string u_nick) : uuid(u_uuid), nickname(u_nick) {}
+	users(int u_uuid, std::string u_nick) : uuid(u_uuid), nickname(u_nick) {}
   int get_uuid()
   {
     return uuid;
@@ -41,6 +39,9 @@ public:
   }
 };
 
+std::vector<std::string> chatrooms_list;
+std::vector<int> uuid_vector;
+std::vector<users> user_list;
 
 class chatrooms                             // Will get moved to class chat_room
 {
@@ -78,7 +79,7 @@ private:
 };
 
 
-nickname_handle(int uuid)
+std::string nickname_handle(int uuid)
   {
     for (int i = 0; i < user_list.size(); i++)
     {
@@ -88,7 +89,7 @@ nickname_handle(int uuid)
       }
     }
   }
-change_nick(int uuid, std::string name)
+void change_nick(int uuid, std::string name)
   {
     for (int i = 0; i < user_list.size(); i++)
     {
@@ -121,7 +122,7 @@ change_nick(int uuid, std::string name)
   {
     return chatrooms_list;
   }
-  create_chatroom(std::string name)
+  void create_chatroom(std::string name)
   {
 
   }
@@ -133,8 +134,8 @@ change_nick(int uuid, std::string name)
     std::vector<std::string> tmp;
     while (i < user_list.size())
     {
-      int uuid = user_uuid(i);
-      std::string nick = user_nick(i);
+      int uuid = user_list[i].get_uuid();
+      std::string nick = user_list[i].get_nick();
       return_value = std::to_string(uuid) + ',' + nick;
       tmp.push_back(return_value);
     }

@@ -147,7 +147,7 @@ private:
             buffer.write(read_msg_.body(), read_msg_.body_length());
             //std::cout << "\n";
             std::string text = buffer.str();
-            std::cout << buffer.str() <<std::endl;
+            std::cout << buffer.str() <<std::endl;                        //buffer is the chat_message converted into a string
             room_.deliver(read_msg_);
             do_read_header();
           }

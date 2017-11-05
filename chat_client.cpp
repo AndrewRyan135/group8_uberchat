@@ -155,7 +155,12 @@ int main(int argc, char* argv[])
       std::string cmd = line;
       //request uuid
       if(cmd.compare("REQUUID") == 0){
-        
+      	//debugger print  
+        std::cout<<"REQUUID ran successfully"<<'\n';
+      //set nickname
+      }else if(cmd.substr(0,5).compare("NICK ")==0){
+      //debugger print
+      std::cout<<"NICK ran successfully"<<'\n';
         //truncate "NICK " from string
         std::string input = cmd.substr(5,cmd.length()-5);
             

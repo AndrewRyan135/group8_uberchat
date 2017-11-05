@@ -154,7 +154,7 @@ void change_nick(int uuid, std::string name)
 
 
 std::string parseChecksum(std::string input){
-  //get everything up to space
+  //get everything up to first space
   std::string checksum = str1.substr(0,str1.find(' '));
   return checksum;
 }
@@ -162,19 +162,23 @@ std::string parseChecksum(std::string input){
 int parseTime(std::string input){
   //find first space and start a substring at the next index
   std::string temp = str1.substr(str1.find(' ')).erase(0,1); 
-  //take everything up until 2nd space and convert to int
+  //take everything up until 2nd space and convert to int in base 10
   int time = std::stoi(temp.substr(0,temp.find(' ')),nullptr,10);
   return time;   
 }
 
-//this func will take the string (checksum time command) and execute the command
-//if the command have arguements (such as NAMECHATROOM) it will also parse the optional command
-std::string parseAndExecCmd(std::string input){
-
+std::string parseCmd(std::string input){
   //find first space and start a substring at the next index
   std::string cmd = str1.substr(str1.find(' ')).erase(0,1); 
   //find 2nd space and start a substring at the next index
   cmd = cmd.substr(cmd.find(' ')).erase(0,1);
+  return cmd;
+}
+
+
+//take command and execute the command
+//if the command have arguements (such as NAMECHATROOM) it will also parse the optional command
+void ExecCmd( std::string cmd){
 
   //request uuid
   if(cmd.compare("REQUUID") == 0){
@@ -247,6 +251,9 @@ std::string parseAndExecCmd(std::string input){
   }else if(cmd.compare("REQUSERS")==0){
     //debugger print
     std::cout<<"REQUSERS ran successfully"<<'\n';
+  }else{
+    std::cout<<"Error! Your entry does not fit the standard format."<<'\n';
+    std::cout<<"Type 'Help' for a list of format and their functions"<<'\n';
   }
 
 }

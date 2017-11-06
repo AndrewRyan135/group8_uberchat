@@ -1,10 +1,13 @@
 #include <vector>
+#include <sstream>
 #include <stdio.h>
 #include <time.h>
 #include <stdlib.h>
 #include <iostream>
 #include <string.h>
 #include <cstdlib>
+#include <boost/algorithm/string/split.hpp>
+#include <boost/algorithm/string/classification.hpp>
 
 
 
@@ -16,7 +19,7 @@ private:
   std::string nickname;
   std::vector<std::string> muted_list;
 public:
-	users(int u_uuid, std::string u_nick) : uuid(u_uuid), nickname(u_nick) {}
+  users(int u_uuid, std::string u_nick) : uuid(u_uuid), nickname(u_nick) {}
   int get_uuid()
   {
     return uuid;
@@ -150,4 +153,121 @@ void change_nick(int uuid, std::string name)
   std::string user_nick(int i)                                                //user_nick()
   {
     return user_list[i].get_nick();
+}
+
+
+std::string parseChecksum(std::string input){
+  //get everything up to first space
+  std::string checksum = input.substr(0,input.find(' '));
+  return checksum;
+}
+
+int parseTime(std::string input){
+  //find first space and start a substring at the next index
+  std::string temp = input.substr(input.find(' ')).erase(0,1); 
+  //take everything up until 2nd space and convert to int in base 10
+  int time = std::stoi(temp.substr(0,temp.find(' ')),nullptr,10);
+  return time;   
+}
+
+std::string parseCmd(std::string input){
+  std::string cmd;
+  std::vector<std::string> results;
+  std::stringstream s(input);
+  while(!s.eof())
+  {
+    std::string tmp;
+    s >> tmp;
+    results.push_back(tmp);
   }
+  //std::string cmd = input.substr(input.find(' ')).erase(0,1); 
+  //find 2nd space and start a substring at the next index
+  //cmd = cmd.substr(cmd.find(' ')).erase(0,1);
+  return results[2];
+}
+
+
+//take command and execute the command
+//if the command have arguements (such as NAMECHATROOM) it will also parse the optional command
+std::string ExecCmd(std::string cmd){
+  //request uuid
+  if(cmd == "REQUUID"){
+    //debugger print  
+    //int uuid = requuid_handle();
+    int uuid = 1234;
+    std::string value = std::to_string(uuid);
+    return value;
+    //std::cout<<"REQUUID ran successfully"<<'\n';
+  //set nickname
+  }else if(cmd.substr(0,5).compare("NICK ")==0){
+    
+    //truncate "NICK " from string
+    std::string cmdOption = cmd.substr(5,cmd.length()-5);
+
+    //debugger print
+    std::cout<<"NICK ran successfully"<<'\n';
+            
+    //debugger print for input after space
+    //std::cout<<"Actual input: "<<input<<'\n';
+
+    //check if new nickname is > 10
+    //if(input.length()>10){
+      //std::cout<<"Error! Nickname cannot exceed 10 characters"<<'\n';
+    //}
+    //else{
+      //debugger print
+      //std::cout<<input.length()<<'\n';
+     // std::cout<<"NICK ran successfully"<<'\n';
+    //}
+      //request list of available chatroom
+  }else if(cmd.compare("REQCHATROOMS")==0){
+    //debugger print
+    std::cout<<"REQUSERS ran successfully"<<'\n';
+
+  //rename chatroom
+  }else if(cmd.substr(0,13).compare("NAMECHATROOM ")==0){
+    //truncate "NAMECHATROOM " from string
+    std::string cmdOption = cmd.substr(13,cmd.length()-13);
+
+    //debugger print
+    std::cout<<"NAMECHATROOM ran successfully"<<'\n';
+
+    //debugger print for input after space
+    //std::cout<<"Actual input: "<<input<<'\n';
+
+  //send a text
+  }else if(cmd.substr(0,9).compare("SENDTEXT ")==0){
+    //debugger print
+    std::cout<<"SENDTEXT ran successfully"<<'\n';
+          
+    //truncate "SENDTEXT " from string
+    std::string cmdOption = cmd.substr(9,cmd.length()-9);
+        
+    //debugger print for input after space
+    std::cout<<"Actual input: "<<cmd<<'\n';
+
+    //check for ; in text
+    if(cmd.find(";") != std::string::npos){
+      std::cout<<"Error! Message cannot contain ';' in it"<<'\n';   
+      }
+    //finally if conditions are all met send message
+    else{ 
+      //debugger print
+      std::cout<<"SENDTEXT ran successfully"<<'\n';
+    }
+
+  //request text
+  }else if(cmd.compare("REQTEXT")==0){
+    //debugger print
+    std::cout<<"REQTEXT ran successfully"<<'\n';
+
+    //request users in chatroom
+  }else if(cmd.compare("REQUSERS")==0){
+    //debugger print
+    std::cout<<"REQUSERS ran successfully"<<'\n';
+  }else{
+    std::cout<<"Error! Your entry does not fit the standard format."<<'\n';
+    std::cout<<"Type 'Help' for a list of format and their functions"<<'\n';
+  }
+
+}

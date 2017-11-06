@@ -147,7 +147,15 @@ private:
             buffer.write(read_msg_.body(), read_msg_.body_length());
             //std::cout << "\n";
             std::string text = buffer.str();
-            std::cout << buffer.str() <<std::endl;                        //buffer is the chat_message converted into a string
+            //std::cout << buffer.str() << std::endl; 
+            std::string poi = "REQUUID"; 
+            int num1 = poi.length();                      //buffer is the chat_message converted into a string
+            std::string value = parseCmd(buffer.str());
+            value.erase(remove_if(value.begin(), value.end(), isspace), value.end());
+            int num2 = value.length();
+            std::cout << value << "s" << std::endl; 
+            std::string something = ExecCmd(value);
+            std::cout <<num1 << num2 << std::endl;                        //buffer is the chat_message converted into a string
             room_.deliver(read_msg_);
             do_read_header();
           }

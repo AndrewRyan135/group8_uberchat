@@ -171,7 +171,7 @@ int parseTime(std::string input){
 }
 
 std::string parseCmd(std::string input){
-  std::string cmd;
+/*  std::string cmd;
   std::vector<std::string> results;
   std::stringstream s(input);
   while(!s.eof())
@@ -180,10 +180,15 @@ std::string parseCmd(std::string input){
     s >> tmp;
     results.push_back(tmp);
   }
-  //std::string cmd = input.substr(input.find(' ')).erase(0,1); 
+*/
+  std::string cmd = input.substr(input.find(' ')).erase(0,1); 
   //find 2nd space and start a substring at the next index
-  //cmd = cmd.substr(cmd.find(' ')).erase(0,1);
-  return results[2];
+  cmd = cmd.substr(cmd.find(' ')).erase(0,1);
+  std::cout<<cmd<<'\n';
+  return cmd;
+
+  //std::cout<<results[2]<<'\n';
+  //return results[2];
 }
 
 
@@ -193,8 +198,8 @@ std::string ExecCmd(std::string cmd){
   //request uuid
   if(cmd == "REQUUID"){
     //debugger print  
-    //int uuid = requuid_handle();
-    int uuid = 1234;
+    int uuid = requuid_handle();
+    //int uuid = 1234;
     std::string value = std::to_string(uuid);
     return value;
     //std::cout<<"REQUUID ran successfully"<<'\n';

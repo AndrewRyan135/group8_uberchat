@@ -151,107 +151,20 @@ int main(int argc, char* argv[])
     char line[chat_message::max_body_length + 1];
     while (std::cin.getline(line, chat_message::max_body_length + 1))
     {
-      //added code for giving command
-      std::string cmd = line;
-      //request uuid
-      if(cmd.compare("REQUUID") == 0){
-      	//debugger print  
-        std::cout<<"REQUUID ran successfully"<<'\n';
-      //set nickname
-      }else if(cmd.substr(0,5).compare("NICK ")==0){
-      //debugger print
-      std::cout<<"NICK ran successfully"<<'\n';
-        //truncate "NICK " from string
-        std::string input = cmd.substr(5,cmd.length()-5);
-            
-        //debugger print for input after space
-        //std::cout<<"Actual input: "<<input<<'\n';
+      //temp checksum and time
+      std::string str = line;
+   	  //std::cout<<"string: "<<str<<'\n';
+      str = "0x12345 12345678 "+str;
+      strcpy(line, str.c_str());
+      //std::cout<<"char array: "<<line<<'\n';
 
-        //check if new nickname is > 10
-        if(input.length()>10){
-          std::cout<<"Error! Nickname cannot exceed 10 characters"<<'\n';
-        }else{
-          //debugger print
-          //std::cout<<input.length()<<'\n';
-          //std::cout<<"NICK ran successfully"<<'\n';
-        }
-      //request list of available chatroom
-      }else if(cmd.compare("REQCHATROOMS")==0){
-        //debugger print
-        std::cout<<"REQUSERS ran successfully"<<'\n';
-
-        //rename chatroom
-      }else if(cmd.substr(0,13).compare("NAMECHATROOM ")==0){
-        //debugger print
-        std::cout<<"NAMECHATROOM ran successfully"<<'\n';
-
-        //truncate "NAMECHATROOM " from string
-        std::string input = cmd.substr(13,cmd.length()-13);
-
-        //debugger print for input after space
-        //std::cout<<"Actual input: "<<input<<'\n';
-
-      //send a text
-      }else if(cmd.substr(0,9).compare("SENDTEXT ")==0){
-        //debugger print
-        //std::cout<<"SENDTEXT ran successfully"<<'\n';
-          
-        //truncate "SENDTEXT " from string
-        std::string input = cmd.substr(9,cmd.length()-9);
-        
-        //debugger print for input after space
-        //std::cout<<"Actual input: "<<input<<'\n';
-
-        //check for ; in text
-        if(cmd.find(";") != std::string::npos){
-        std::cout<<"Error! Message cannot contain ';' in it"<<'\n';   
-        }
-        //finally if conditions are all met send message
-        else{ 
-          //change input from string to char*
-          const char *message = input.c_str();
-
-          //messaging part
-          chat_message msg;
-          msg.body_length(std::strlen(message));
-          std::memcpy(msg.body(), message, msg.body_length());
-          msg.encode_header();
-          c.write(msg);
-
-          //original messaging without truncating "SENDTEXT"
-      /*  chat_message msg;
-          msg.body_length(std::strlen(line));
-          std::memcpy(msg.body(), line, msg.body_length());
-          msg.encode_header();
-          c.write(msg); */
-        }
-
-      //request text
-      }else if(cmd.compare("REQTEXT")==0){
-      //debugger print
-      std::cout<<"REQTEXT ran successfully"<<'\n';
-
-
-      //request users in chatroom
-      }else if(cmd.compare("REQUSERS")==0){
-      //debugger print
-      std::cout<<"REQUSERS ran successfully"<<'\n';
-
-      }else if(cmd.compare("HELP")==0){
-            std::cout<<"Type:         Followed by:          To:"<<'\n';
-            std::cout<<"REQUUID       (nothing)             request a user ID"<<'\n';
-            std::cout<<"NICK          (desired nickname)    display as your nickname"<<'\n';
-            std::cout<<"REQCHATROOMS  (nothing              request name of all available chatrooms"<<'\n';
-            std::cout<<"NAMECHATROOM  (new chatroom name)   create and name a chatroom"<<'\n';
-            std::cout<<"SENDTEXT      (message)             send message to all in chatroom"<<'\n';
-            std::cout<<"REQTEXT       (nothing)             request text since last time REQTEXT was used"<<'\n';
-            std::cout<<"REQUSERS      (nothing)             request all user's nickname in chatroom"<<'\n';
-            std::cout<<"HELP          (nothing)             show help menu"<<'\n';
-      }
-      else{
-        std::cout<<"Error! Your entry does not fit the standard format."<<'\n';
-        std::cout<<"Type 'Help' for a list of format and their functions"<<'\n';
-      }
+      //original messaging without truncating "SENDTEXT"
+      chat_message msg;
+      msg.body_length(std::strlen(line));
+      std::memcpy(msg.body(), line, msg.body_length());
+      msg.encode_header();
+      c.write(msg);
+       
     }
 
     c.close();

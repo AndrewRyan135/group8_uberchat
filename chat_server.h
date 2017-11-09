@@ -9,6 +9,7 @@
 #include <boost/algorithm/string/split.hpp>
 #include <boost/algorithm/string/classification.hpp>
 
+#include "boost/date_time/posix_time/posix_time.hpp"
 
 
 
@@ -162,7 +163,7 @@ std::string parseChecksum(std::string input){
   return checksum;
 }
 
-int parseTime(std::string input){
+ int parseTime(std::string input){
   //find first space and start a substring at the next index
   std::string temp = input.substr(input.find(' ')).erase(0,1); 
   //take everything up until 2nd space and convert to int in base 10
@@ -194,15 +195,15 @@ std::string parseCmd(std::string input){
 
 //take command and execute the command
 //if the command have arguements (such as NAMECHATROOM) it will also parse the optional command
-void ExecCmd(std::string cmd){
+std::string ExecCmd(std::string cmd){
   //request uuid
   if(cmd == "REQUUID"){
     //debugger print  
-    //int uuid = requuid_handle();
+    int uuid = requuid_handle();
     //int uuid = 1234;
-    //std::string value = std::to_string(uuid);
-    //return value;
-    std::cout<<"REQUUID ran successfully"<<'\n';
+    std::string value = std::to_string(uuid);
+    return value;
+    //std::cout<<"REQUUID ran successfully"<<'\n';
   //set nickname
   }else if(cmd.substr(0,5).compare("NICK ")==0){
     
@@ -227,7 +228,7 @@ void ExecCmd(std::string cmd){
       //request list of available chatroom
   }else if(cmd.compare("REQCHATROOMS")==0){
     //debugger print
-    std::cout<<"REQCHATROOMS ran successfully"<<'\n';
+    std::cout<<"REQUSERS ran successfully"<<'\n';
 
   //rename chatroom
   }else if(cmd.substr(0,13).compare("NAMECHATROOM ")==0){
@@ -249,7 +250,7 @@ void ExecCmd(std::string cmd){
     std::string cmdOption = cmd.substr(9,cmd.length()-9);
         
     //debugger print for input after space
-    std::cout<<"Actual input: "<<cmdOption<<'\n';
+    std::cout<<"Actual input: "<<cmd<<'\n';
 
     //check for ; in text
     if(cmd.find(";") != std::string::npos){
@@ -274,5 +275,33 @@ void ExecCmd(std::string cmd){
     std::cout<<"Error! Your entry does not fit the standard format."<<'\n';
     std::cout<<"Type 'Help' for a list of format and their functions"<<'\n';
   }
+
+}
+
+int getTime(){
+  
+  //get universal time in millisec
+  boost::posix_time::ptime now = boost::posix_time::microsec_clock::universal_time();
+  int time = now.time_of_day().total_milliseconds();
+
+  //this bottom code will convert into time of day hr:min:sec
+  //boost::posix_time::time_duration time_formated = boost::posix_time::milliseconds(time);
+
+  //debugger print
+  std::cout<<time<<'\n';
+
+  return time;
+
+}
+
+std::string appendTime(std::string input){
+  std::string time = std::to_string(getTime());
+  //debugger print
+  //std::cout<<time<<'\n';
+  return time+" "+input;
+}
+
+std::string appendChecksum (std::string){
+  
 
 }

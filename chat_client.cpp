@@ -14,6 +14,7 @@
 #include <thread>
 #include <boost/asio.hpp>
 #include "chat_message.hpp"
+#include "chat_server.h"
 
 using boost::asio::ip::tcp;
 
@@ -154,7 +155,7 @@ int main(int argc, char* argv[])
       //temp checksum and time
       std::string str = line;
    	  //std::cout<<"string: "<<str<<'\n';
-      str = "0x12345 12345678 "+str;
+      str = "0x12345 "+appendTime(str);
       strcpy(line, str.c_str());
       //std::cout<<"char array: "<<line<<'\n';
 

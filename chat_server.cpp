@@ -151,7 +151,9 @@ private:
             //std::string poi = "REQUUID"; 
             //int num1 = poi.length();                      //buffer is the chat_message converted into a string
             //int num1 = text.length();
+            std::string cksum = parseChecksum(buffer.str());
             std::string value = parseCmd(buffer.str());
+            int test = check_cksum(cksum, value);
             //value.erase(std::remove(value.begin(), value.end(), '\0'), value.end());
             //int num2 = value.length();
             //std::cout << value << "\n" << poi << std::endl; 

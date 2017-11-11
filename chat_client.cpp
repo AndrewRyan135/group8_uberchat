@@ -155,7 +155,14 @@ int main(int argc, char* argv[])
       //temp checksum and time
       std::string str = line;
    	  //std::cout<<"string: "<<str<<'\n';
-      str = "0x12345 "+appendTime(str);
+      
+      //get checksum of command only
+      int cksum = getChecksum(str);
+      //append time to front  
+      str = appendInt(str, getTime());
+      //append checksum to front
+      str = appendInt(str, cksum);
+
       strcpy(line, str.c_str());
       //std::cout<<"char array: "<<line<<'\n';
 
@@ -178,4 +185,5 @@ int main(int argc, char* argv[])
 
   return 0;
 }
+
 

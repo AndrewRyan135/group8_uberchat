@@ -9,7 +9,9 @@
 #include <boost/algorithm/string/split.hpp>
 #include <boost/algorithm/string/classification.hpp>
 
-#include "boost/date_time/posix_time/posix_time.hpp"
+#include <boost/crc.hpp>  //for checksum
+#include <boost/date_time/posix_time/posix_time.hpp>  //for time
+
 
 
 
@@ -288,20 +290,46 @@ int getTime(){
   //boost::posix_time::time_duration time_formated = boost::posix_time::milliseconds(time);
 
   //debugger print
-  std::cout<<time<<'\n';
+  std::cout<<"Time since start of the day(ms): "<<std::dec<<time<<'\n';
 
   return time;
 
 }
 
-std::string appendTime(std::string input){
-  std::string time = std::to_string(getTime());
-  //debugger print
-  //std::cout<<time<<'\n';
-  return time+" "+input;
+int getChecksum(const std::string& str){
+  //crc_32_type is typedef as crc_optimal(32, 0x04C11DB7, 0xFFFFFFFF, 0xFFFFFFFF, true, true) in boost
+  boost::crc_32_type cksum;
+  //turn string into an array of char of data's ascii and process it
+  cksum.process_bytes(str.data(), str.length());
+  //convert to an umber
+  int result = cksum.checksum();
+
+  //debugger code
+  //std::cout<<"checksum: "<<std::hex<<result<<'\n';
+
+  return result; 
 }
 
-std::string appendChecksum (std::string){
-  
+//appends the int as a string to the front
+std::string appendInt(std::string input, int num){
+  std::string num_str = std::to_string(num);
+  std::string result = num_str+" "+input;
+  //debugger print
+  //std::cout<<"current processed string: "<<result<<'\n';
+  return result;
+}
 
+//return 0 for okay, 1 for corruption
+int check_cksum(std::string cksum, std::string cmd){
+  int newCksum = getChecksum(cmd);
+  int expected = atoi(cksum.c_str());
+  if(newCksum == expected){
+    std::cout<<"Data integrity verified"<<'\n';
+    return 0;
+  }else{
+    std::cout<<"Corrupted data"<<'\n';
+    std::cout<<"Expected: "<<std::hex<<expected<<'\n';
+    std::cout<<"Checksum: "<<std::hex<<newCksum<<'\n';
+    return 1;
+  }
 }

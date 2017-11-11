@@ -147,17 +147,23 @@ private:
             buffer.write(read_msg_.body(), read_msg_.body_length());
             //std::cout << "\n";
             std::string text = buffer.str();
-            std::cout << "|"<< buffer.str() <<"|"<<std::endl; 
-            std::string poi = "REQUUID"; 
-            int num1 = poi.length();                      //buffer is the chat_message converted into a string
-            std::string value = parseCmd(buffer.str());
-            value.erase(std::remove(value.begin(), value.end(), '\0'), value.end());
-            int num2 = value.length();
-            std::cout << value << "\n" << poi << std::endl; 
-            std::string something = ExecCmd(value);
-            std::cout << num1 << num2 << std::endl;  
-            std::cout << something << std::endl;                      //buffer is the chat_message converted into a string
-            room_.deliver(read_msg_);
+            buffer.str(std::string());
+            text.erase(std::remove(text.begin(), text.end(), '\0'), text.end());
+            std::string value = parseCmd(text);
+            std::string ret_value = ExecCmd(value);
+            std::string out_string = text + " " + ret_value;
+            int len = out_string.size();
+            char line[chat_message::max_body_length +1];
+            memset(line,0,sizeof(line));
+            for (int i=0; i<=len;i++)
+            {
+              line[i] = ret_value[i];
+            }
+            chat_message msg;
+            msg.body_length(std::strlen(line));
+            std::memcpy(msg.body(), line, msg.body_length());
+            msg.encode_header();
+            room_.deliver(msg);
             do_read_header();
           }
           else

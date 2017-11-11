@@ -119,6 +119,8 @@ void change_nick(int uuid, std::string name)
         val = true;
       }
     }
+    users user(num, "");
+    user_list.push_back(user);
     return num; 
   }
   std::vector<std::string> chatroom_handle() //Will provide the vector containing the names of the chat rooms
@@ -141,6 +143,7 @@ void change_nick(int uuid, std::string name)
       std::string nick = user_list[i].get_nick();
       return_value = std::to_string(uuid) + ',' + nick;
       tmp.push_back(return_value);
+      i++;
     }
     return tmp;
   }
@@ -204,13 +207,18 @@ std::string ExecCmd(std::string cmd){
     return value;
     //std::cout<<"REQUUID ran successfully"<<'\n';
   //set nickname
-  }else if(cmd.substr(0,5).compare("NICK ")==0){
+  }else if(cmd.substr(0,5).compare("NICK ")==0){                          //NICK
     
     //truncate "NICK " from string
     std::string cmdOption = cmd.substr(5,cmd.length()-5);
 
     //debugger print
     std::cout<<"NICK ran successfully"<<'\n';
+    std::string uuid_str = cmdOption.substr(0,9);
+    std::string name = cmdOption.substr(9,cmd.length()-9);
+    int uuid = std::stoi(uuid_str);
+    change_nick(uuid, name);
+    return "Nick is " + name;
             
     //debugger print for input after space
     //std::cout<<"Actual input: "<<input<<'\n';
@@ -241,12 +249,13 @@ std::string ExecCmd(std::string cmd){
     //std::cout<<"Actual input: "<<input<<'\n';
 
   //send a text
-  }else if(cmd.substr(0,9).compare("SENDTEXT ")==0){
+  }else if(cmd.substr(0,9).compare("SENDTEXT ")==0){                      //SENDTXT
     //debugger print
     std::cout<<"SENDTEXT ran successfully"<<'\n';
           
     //truncate "SENDTEXT " from string
     std::string cmdOption = cmd.substr(9,cmd.length()-9);
+    return cmdOption;
         
     //debugger print for input after space
     std::cout<<"Actual input: "<<cmd<<'\n';
@@ -262,12 +271,20 @@ std::string ExecCmd(std::string cmd){
     }
 
   //request text
-  }else if(cmd.compare("REQTEXT")==0){
+  }else if(cmd.compare("REQTEXT")==0){                                    //REQTXT
     //debugger print
     std::cout<<"REQTEXT ran successfully"<<'\n';
 
     //request users in chatroom
-  }else if(cmd.compare("REQUSERS")==0){
+  }else if(cmd.compare("REQUSERS")==0){                                   //REQUSERS
+    std::vector<std::string> users = request_users();
+    std::string ret_string;
+    for (int i = 0; i < users.size(); i++){
+      std::cout << "Yep" << std::endl;
+      ret_string += users[i] + " \n";
+    }
+    std::cout<<"REQUSERS ran successfully"<<'\n';
+    return ret_string;
     //debugger print
     std::cout<<"REQUSERS ran successfully"<<'\n';
   }else{

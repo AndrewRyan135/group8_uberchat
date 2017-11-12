@@ -147,20 +147,53 @@ private:
             buffer.write(read_msg_.body(), read_msg_.body_length());
             //std::cout << "\n";
             std::string text = buffer.str();
-            std::cout << "|"<< buffer.str() <<"|"<<std::endl; 
-            //std::string poi = "REQUUID"; 
-            //int num1 = poi.length();                      //buffer is the chat_message converted into a string
-            //int num1 = text.length();
-            std::string cksum = parseChecksum(buffer.str());
-            std::string value = parseCmd(buffer.str());
+            buffer.str(std::string());
+            text.erase(std::remove(text.begin(), text.end(), '\0'), text.end());
+            std::string cksum = parseChecksum(text);
+            std::cout << "Before parseCMD" << std::endl;
+            std::string value;
+            if (text.find("REQUUID") != std::string::npos)
+            {
+              value = nouuid_parseCmd(text);
+            }
+            else
+            {
+              value = parseCmd(text);
+            }
+            std::cout << "After parseCmd" << std::endl;
             int test = check_cksum(cksum, value);
-            //value.erase(std::remove(value.begin(), value.end(), '\0'), value.end());
-            //int num2 = value.length();
-            //std::cout << value << "\n" << poi << std::endl; 
-            std::string something = ExecCmd(value);
-            //std::cout << num1 <<" "<< num2 << std::endl;  
-            std::cout << something << std::endl;                      //buffer is the chat_message converted into a string
-            room_.deliver(read_msg_);
+            std::string ret_value = ExecCmd(value);
+            std::string out_string = text + " " + ret_value;
+            std::string UUID;
+            if (value.compare("REQUUID")!=0)
+            {
+              UUID = std::to_string(parseUUID(text));
+            }
+            if (value.compare("REQUUID")==0 || value.compare("NICK")==0)
+            {
+              ret_value = value + " " + ret_value;
+            }
+            int len = ret_value.size()+value.size()+1;
+            char line[chat_message::max_body_length +1];
+            memset(line,0,sizeof(line));
+            std::string name = "no name";
+            for (int i = 0; i < user_list.size(); i++)
+            {
+              if (user_list[i].get_uuid() == std::stoi(UUID))
+              {
+                name = user_list[i].get_nick();
+              }
+            }
+            ret_value = name + " " + ret_value;
+            for (int i=0; i<=len;i++)
+            {
+              line[i] = ret_value[i];
+            }
+            chat_message msg;
+            msg.body_length(std::strlen(line));
+            std::memcpy(msg.body(), line, msg.body_length());
+            msg.encode_header();
+            room_.deliver(msg);
             do_read_header();
           }
           else

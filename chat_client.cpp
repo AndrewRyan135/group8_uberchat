@@ -20,6 +20,32 @@ using boost::asio::ip::tcp;
 
 typedef std::deque<chat_message> chat_message_queue;
 
+class users_info
+{
+public:
+  int get_uuid()
+  {
+    return uuid;
+  }
+  void set_uuid(int in_uuid)
+  {
+    uuid = in_uuid;
+  }
+  std::string get_nick()
+  {
+    return nick;
+  }
+  void set_nick(std::string name)
+  {
+    nick = name;
+  }
+private:
+  int uuid; 
+  std::string nick;
+};
+
+users_info user;
+
 class chat_client
 {
 public:
@@ -98,13 +124,26 @@ private:
             std::string text = buffer.str();
             buffer.str(std::string());
             text.erase(std::remove(text.begin(), text.end(), '\0'), text.end());
-            std::string time = timeStamp();
-            std::string value = time + " " + text;
+            std::cout << "I a in do_read_body" << std::endl;
+
+            if (text.find("REQUUID") != std::string::npos)
+            {
+              std::string num = text.substr(8,text.length()-8);
+              user.set_uuid(std::stoi(num));
+              text = text.substr(8,text.length()-8);
+            }
+            if (text.find("NICK") != std::string::npos)
+            {
+              std::string name = text.substr(14,text.length()-14);
+              user.set_nick(name);
+              text = text.substr(14,text.length()-14);
+            }
+
             char line[chat_message::max_body_length+1];
             memset(line,0,sizeof(line));
-            for (int i=0; i<=value.size();i++)
+            for (int i=0; i<=text.size();i++)
             {
-              line[i] = value[i];
+              line[i] = text[i];
             }
             chat_message msg;
             msg.body_length(std::strlen(line));
@@ -113,13 +152,6 @@ private:
             std::cout.write(msg.body(), msg.body_length());
             std::cout << "\n";
             do_read_header();
-
-            /*
-            //original text 
-            std::cout.write(read_msg_.body(), read_msg_.body_length());
-            std::cout << "\n";
-            do_read_header();
-            */ 
           }
           else
           {
@@ -180,14 +212,24 @@ int main(int argc, char* argv[])
     {
       //temp checksum and time
       std::string str = line;
-   	  //std::cout<<"string: "<<str<<'\n';
-      
-      //get checksum of command only
-      int cksum = getChecksum(str);
-      //append time to front  
-      str = appendInt(str, getTime());
-      //append checksum to front
-      str = appendInt(str, cksum);
+
+      if (str.compare("REQUUID")==0){
+        int cksum = getChecksum(str);
+        //append time to front  
+        str = appendInt(str, getTime());
+        //append checksum to front
+        str = appendInt(str, cksum);
+      }else{      
+        int id = user.get_uuid();
+        //get checksum of command only
+        int cksum = getChecksum(str);
+        //apend uuid to front
+        str = appendInt(str, id);
+        //append time to front  
+        str = appendInt(str, getTime());
+        //append checksum to front
+        str = appendInt(str, cksum);
+      }
 
       strcpy(line, str.c_str());
       //std::cout<<"char array: "<<line<<'\n';

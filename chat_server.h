@@ -8,10 +8,8 @@
 #include <cstdlib>
 #include <boost/algorithm/string/split.hpp>
 #include <boost/algorithm/string/classification.hpp>
-
 #include <boost/crc.hpp>  //for checksum
-#include <boost/date_time/posix_time/posix_time.hpp>  //for time
-
+#include <boost/date_time/posix_time/posix_time.hpp> //for time
 
 
 
@@ -122,6 +120,8 @@ void change_nick(int uuid, std::string name)
         val = true;
       }
     }
+    users user(num, "");
+    user_list.push_back(user);
     return num; 
   }
   std::vector<std::string> chatroom_handle() //Will provide the vector containing the names of the chat rooms
@@ -144,6 +144,7 @@ void change_nick(int uuid, std::string name)
       std::string nick = user_list[i].get_nick();
       return_value = std::to_string(uuid) + ',' + nick;
       tmp.push_back(return_value);
+      i++;
     }
     return tmp;
   }
@@ -165,12 +166,36 @@ std::string parseChecksum(std::string input){
   return checksum;
 }
 
- int parseTime(std::string input){
+int parseTime(std::string input){
   //find first space and start a substring at the next index
   std::string temp = input.substr(input.find(' ')).erase(0,1); 
   //take everything up until 2nd space and convert to int in base 10
   int time = std::stoi(temp.substr(0,temp.find(' ')),nullptr,10);
   return time;   
+}
+int parseUUID(std::string input)
+{
+  std::string temp = input.substr(input.find(' ')).erase(0,1);
+  temp = temp.substr(temp.find(' ')).erase(0,1);
+  int UUID = std::stoi(temp.substr(0,temp.find(' ')),nullptr,10);
+  return UUID;
+}
+std::string nouuid_parseCmd(std::string input){
+/*  std::string cmd;
+  std::vector<std::string> results;
+  std::stringstream s(input);
+  while(!s.eof())
+  {
+    std::string tmp;
+    s >> tmp;
+    results.push_back(tmp);
+  }
+*/
+  std::string cmd = input.substr(input.find(' ')).erase(0,1); 
+  //find 2nd space and start a substring at the next index
+  cmd = cmd.substr(cmd.find(' ')).erase(0,1);
+  std::cout<<cmd<<'\n';
+  return cmd;
 }
 
 std::string parseCmd(std::string input){
@@ -186,6 +211,7 @@ std::string parseCmd(std::string input){
 */
   std::string cmd = input.substr(input.find(' ')).erase(0,1); 
   //find 2nd space and start a substring at the next index
+  cmd = cmd.substr(cmd.find(' ')).erase(0,1);
   cmd = cmd.substr(cmd.find(' ')).erase(0,1);
   std::cout<<cmd<<'\n';
   return cmd;
@@ -207,13 +233,18 @@ std::string ExecCmd(std::string cmd){
     return value;
     //std::cout<<"REQUUID ran successfully"<<'\n';
   //set nickname
-  }else if(cmd.substr(0,5).compare("NICK ")==0){
+  }else if(cmd.substr(0,5).compare("NICK ")==0){                          //NICK
     
     //truncate "NICK " from string
     std::string cmdOption = cmd.substr(5,cmd.length()-5);
 
     //debugger print
     std::cout<<"NICK ran successfully"<<'\n';
+    std::string uuid_str = cmdOption.substr(0,9);
+    std::string name = cmdOption.substr(9,cmd.length()-9);
+    int uuid = std::stoi(uuid_str);
+    change_nick(uuid, name);
+    return name;
             
     //debugger print for input after space
     //std::cout<<"Actual input: "<<input<<'\n';
@@ -244,12 +275,13 @@ std::string ExecCmd(std::string cmd){
     //std::cout<<"Actual input: "<<input<<'\n';
 
   //send a text
-  }else if(cmd.substr(0,9).compare("SENDTEXT ")==0){
+  }else if(cmd.substr(0,9).compare("SENDTEXT ")==0){                      //SENDTXT
     //debugger print
     std::cout<<"SENDTEXT ran successfully"<<'\n';
           
     //truncate "SENDTEXT " from string
     std::string cmdOption = cmd.substr(9,cmd.length()-9);
+    return cmdOption;
         
     //debugger print for input after space
     std::cout<<"Actual input: "<<cmd<<'\n';
@@ -265,19 +297,26 @@ std::string ExecCmd(std::string cmd){
     }
 
   //request text
-  }else if(cmd.compare("REQTEXT")==0){
+  }else if(cmd.compare("REQTEXT")==0){                                    //REQTXT
     //debugger print
     std::cout<<"REQTEXT ran successfully"<<'\n';
 
     //request users in chatroom
-  }else if(cmd.compare("REQUSERS")==0){
+  }else if(cmd.compare("REQUSERS")==0){                                   //REQUSERS
+    std::vector<std::string> users = request_users();
+    std::string ret_string;
+    for (int i = 0; i < users.size(); i++){
+      std::cout << "Yep" << std::endl;
+      ret_string += users[i] + " \n";
+    }
+    std::cout<<"REQUSERS ran successfully"<<'\n';
+    return ret_string;
     //debugger print
     std::cout<<"REQUSERS ran successfully"<<'\n';
   }else{
     std::cout<<"Error! Your entry does not fit the standard format."<<'\n';
     std::cout<<"Type 'Help' for a list of format and their functions"<<'\n';
   }
-
 }
 
 int getTime(){
@@ -290,7 +329,7 @@ int getTime(){
   //boost::posix_time::time_duration time_formated = boost::posix_time::milliseconds(time);
 
   //debugger print
-  std::cout<<"Time since start of the day(ms): "<<std::dec<<time<<'\n';
+  //std::cout<<"Time since start of the day(ms): "<<std::dec<<time<<'\n';
 
   return time;
 
@@ -341,8 +380,10 @@ std::string timeStamp(){
   std::string sec = std::to_string(((time_ms%3600000)%60000)/1000);
   std::string ms = std::to_string((((time_ms%3600000)%60000)%1000));
 
+  std::string result = hr+":"+min+":"+sec+"."+ms;
+
   //debugger print 
-  //std::cout<<"time: "<<result<<'\n';
+  std::cout<<"time: "<<result<<'\n';
 
   return result;
 }

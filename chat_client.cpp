@@ -23,7 +23,7 @@ typedef std::deque<chat_message> chat_message_queue;
 class users_info
 {
 public:
-  std::string get_uuid()
+  int get_uuid()
   {
     return uuid;
   }
@@ -40,7 +40,8 @@ public:
     nick = name;
   }
 private:
-  std::string uuid, nick;
+  std::string nick;
+  int uuid;
 };
 
 users_info user;
@@ -123,11 +124,10 @@ private:
             std::string text = buffer.str();
             buffer.str(std::string());
             text.erase(std::remove(text.begin(), text.end(), '\0'), text.end());
-            std::cout << "I a in do_read_body" << std::endl;
-
+            std::string num;
             if (text.find("REQUUID") != std::string::npos)
             {
-              std::string num = text.substr(8,text.length()-8);
+              num = text.substr(8,text.length()-8);
               user.set_uuid(std::stoi(num));
               text = text.substr(8,text.length()-8);
             }
@@ -150,6 +150,7 @@ private:
             msg.encode_header();
             std::cout.write(msg.body(), msg.body_length());
             std::cout << "\n";
+            std::cout << "Finished reading" << std::endl;
             do_read_header();
           }
           else
@@ -209,16 +210,26 @@ int main(int argc, char* argv[])
     char line[chat_message::max_body_length + 1];
     while (std::cin.getline(line, chat_message::max_body_length + 1))
     {
-      //temp checksum and time
+     //temp checksum and time
       std::string str = line;
-      //std::cout<<"string: "<<str<<'\n';
-      
-      //get checksum of command only
-      int cksum = getChecksum(str);
-      //append time to front  
-      str = appendInt(str, getTime());
-      //append checksum to front
-      str = appendInt(str, cksum);
+
+      if (str.compare("REQUUID")==0){
+        int cksum = getChecksum(str);
+        //append time to front  
+        str = appendInt(str, getTime());
+        //append checksum to front
+        str = appendInt(str, cksum);
+      }else{      
+        int id = user.get_uuid();
+        //get checksum of command only
+        int cksum = getChecksum(str);
+        //apend uuid to front
+        str = appendInt(str, id);
+        //append time to front  
+        str = appendInt(str, getTime());
+        //append checksum to front
+        str = appendInt(str, cksum);
+      }
 
       strcpy(line, str.c_str());
       //std::cout<<"char array: "<<line<<'\n';

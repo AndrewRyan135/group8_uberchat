@@ -379,3 +379,18 @@ int check_cksum(std::string cksum, std::string cmd){
     return 1;
   }
 }
+
+std::string timeStamp(){
+  int time_ms = getTime();
+  std::string hr = std::to_string(time_ms/(3600000));
+  std::string min = std::to_string((time_ms%3600000)/60000);
+  std::string sec = std::to_string(((time_ms%3600000)%60000)/1000);
+  std::string ms = std::to_string((((time_ms%3600000)%60000)%1000));
+
+  std::string result = hr+":"+min+":"+sec+"."+ms;
+
+  //debugger print 
+  std::cout<<"time: "<<result<<'\n';
+
+  return result;
+}

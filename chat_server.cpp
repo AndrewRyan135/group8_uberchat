@@ -164,10 +164,10 @@ private:
             int test = check_cksum(cksum, value);
             std::string ret_value = ExecCmd(value);
             std::string out_string = text + " " + ret_value;
-            std::string UUID;
+            int UUID;
             if (value.compare("REQUUID")!=0)
             {
-              UUID = std::to_string(parseUUID(text));
+              UUID = parseUUID(text);
             }
             if (value.compare("REQUUID")==0 || value.compare("NICK")==0)
             {
@@ -184,7 +184,10 @@ private:
                 name = user_list[i].get_nick();
               }
             }
-            ret_value = name + " " + ret_value;
+            if (value.compare("REQUUID")!=0)
+            {
+              ret_value = name + " " + ret_value;
+            }
             for (int i=0; i<=len;i++)
             {
               line[i] = ret_value[i];

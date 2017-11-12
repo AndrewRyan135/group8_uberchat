@@ -91,9 +91,35 @@ private:
         {
           if (!ec)
           {
+            std::stringstream buffer;
+            //std::streambuf* old = std::cout.rdbuf(buffer.rdbuf());
+            buffer.write(read_msg_.body(), read_msg_.body_length());
+            //std::cout << "\n";
+            std::string text = buffer.str();
+            buffer.str(std::string());
+            text.erase(std::remove(text.begin(), text.end(), '\0'), text.end());
+            std::string time = timeStamp();
+            std::string value = time + " " + text;
+            char line[chat_message::max_body_length+1];
+            memset(line,0,sizeof(line));
+            for (int i=0; i<=value.size();i++)
+            {
+              line[i] = value[i];
+            }
+            chat_message msg;
+            msg.body_length(std::strlen(line));
+            std::memcpy(msg.body(), line, msg.body_length());
+            msg.encode_header();
+            std::cout.write(msg.body(), msg.body_length());
+            std::cout << "\n";
+            do_read_header();
+
+            /*
+            //original text 
             std::cout.write(read_msg_.body(), read_msg_.body_length());
             std::cout << "\n";
             do_read_header();
+            */ 
           }
           else
           {

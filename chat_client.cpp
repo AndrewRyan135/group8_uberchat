@@ -14,6 +14,7 @@
 #include <thread>
 #include <boost/asio.hpp>
 #include "chat_message.hpp"
+#include "chat_server.h"
 
 using boost::asio::ip::tcp;
 
@@ -35,6 +36,7 @@ public:
     io_service_.post(
         [this, msg]()
         {
+          std::cout << "I am called in write" << std::endl;
           bool write_in_progress = !write_msgs_.empty();
           write_msgs_.push_back(msg);
           if (!write_in_progress)
@@ -48,6 +50,9 @@ public:
   {
     io_service_.post([this]() { socket_.close(); });
   }
+
+  //added methods starts here
+
 
 private:
   void do_connect(tcp::resolver::iterator endpoint_iterator)
@@ -87,6 +92,29 @@ private:
         {
           if (!ec)
           {
+            /*std::stringstream buffer;
+            //std::streambuf* old = std::cout.rdbuf(buffer.rdbuf());
+            buffer.write(read_msg_.body(), read_msg_.body_length());
+            //std::cout << "\n";
+            std::string text = buffer.str();
+            buffer.str(std::string());
+            text.erase(std::remove(text.begin(), text.end(), '\0'), text.end());
+            std::string time = std::to_string(getTime());
+            std::string value = time + " " + text;
+            char line[chat_message::max_body_length+1];
+            memset(line,0,sizeof(line));
+            for (int i=0; i<=value.size();i++)
+            {
+              line[i] = value[i];
+            }
+            chat_message msg;
+            msg.body_length(std::strlen(line));
+            std::memcpy(msg.body(), line, msg.body_length());
+            msg.encode_header();
+            std::cout.write(msg.body(), msg.body_length());
+            std::cout << "\n";
+            do_read_header();*/
+            std::cout << "I am called in do_read_head" << std::endl;
             std::cout.write(read_msg_.body(), read_msg_.body_length());
             std::cout << "\n";
             do_read_header();
@@ -148,11 +176,27 @@ int main(int argc, char* argv[])
     char line[chat_message::max_body_length + 1];
     while (std::cin.getline(line, chat_message::max_body_length + 1))
     {
+      //temp checksum and time
+      std::string str = line;
+      //std::cout<<"string: "<<str<<'\n';
+      
+      //get checksum of command only
+      int cksum = getChecksum(str);
+      //append time to front  
+      str = appendInt(str, getTime());
+      //append checksum to front
+      str = appendInt(str, cksum);
+
+      strcpy(line, str.c_str());
+      //std::cout<<"char array: "<<line<<'\n';
+
+      //original messaging without truncating "SENDTEXT"
       chat_message msg;
       msg.body_length(std::strlen(line));
       std::memcpy(msg.body(), line, msg.body_length());
       msg.encode_header();
       c.write(msg);
+       
     }
 
     c.close();
@@ -165,4 +209,5 @@ int main(int argc, char* argv[])
 
   return 0;
 }
+
 

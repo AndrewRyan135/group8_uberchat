@@ -149,10 +149,12 @@ private:
             std::string text = buffer.str();
             buffer.str(std::string());
             text.erase(std::remove(text.begin(), text.end(), '\0'), text.end());
+            std::string cksum = parseChecksum(text);
             std::string value = parseCmd(text);
+            int test = check_cksum(cksum, value);
             std::string ret_value = ExecCmd(value);
             std::string out_string = text + " " + ret_value;
-            int len = out_string.size();
+            int len = ret_value.size();
             char line[chat_message::max_body_length +1];
             memset(line,0,sizeof(line));
             for (int i=0; i<=len;i++)

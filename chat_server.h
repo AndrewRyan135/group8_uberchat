@@ -8,7 +8,8 @@
 #include <cstdlib>
 #include <boost/algorithm/string/split.hpp>
 #include <boost/algorithm/string/classification.hpp>
-
+#include <boost/crc.hpp>  //for checksum
+#include <boost/date_time/posix_time/posix_time.hpp> //for time
 
 
 
@@ -292,4 +293,64 @@ std::string ExecCmd(std::string cmd){
     std::cout<<"Type 'Help' for a list of format and their functions"<<'\n';
   }
 
+}
+
+int getTime(){
+  
+  //get universal time in millisec
+  boost::posix_time::ptime now = boost::posix_time::microsec_clock::universal_time();
+  int time = now.time_of_day().total_milliseconds();
+  std::string time_str = std::to_string(time);
+  std::string hour = time_str.substr(0,2);
+  std::string min = time_str.substr(3,4);
+  std::string sec = time_str.substr(5,6);
+  std::string mil = time_str.substr(7,10);
+
+  //this bottom code will convert into time of day hr:min:sec
+  //boost::posix_time::time_duration time_formated = boost::posix_time::milliseconds(time);
+
+  //debugger print
+  //std::cout<<std::dec<<time<<'\n';
+  std::cout << time << " ";
+
+  return time;
+
+}
+
+int getChecksum(const std::string& str){
+  //crc_32_type is typedef as crc_optimal(32, 0x04C11DB7, 0xFFFFFFFF, 0xFFFFFFFF, true, true) in boost
+  boost::crc_32_type cksum;
+  //turn string into an array of char of data's ascii and process it
+  cksum.process_bytes(str.data(), str.length());
+  //convert to an umber
+  int result = cksum.checksum();
+
+  //debugger code
+  //std::cout<<"checksum: "<<std::hex<<result<<'\n';
+
+  return result; 
+}
+
+//appends the int as a string to the front
+std::string appendInt(std::string input, int num){
+  std::string num_str = std::to_string(num);
+  std::string result = num_str+" "+input;
+  //debugger print
+  //std::cout<<"current processed string: "<<result<<'\n';
+  return result;
+}
+
+//return 0 for okay, 1 for corruption
+int check_cksum(std::string cksum, std::string cmd){
+  int newCksum = getChecksum(cmd);
+  int expected = atoi(cksum.c_str());
+  if(newCksum == expected){
+    std::cout<<"Data integrity verified"<<'\n';
+    return 0;
+  }else{
+    std::cout<<"Corrupted data"<<'\n';
+    std::cout<<"Expected: "<<std::hex<<expected<<'\n';
+    std::cout<<"Checksum: "<<std::hex<<newCksum<<'\n';
+    return 1;
+  }
 }

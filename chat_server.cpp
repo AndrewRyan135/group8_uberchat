@@ -150,13 +150,33 @@ private:
             buffer.str(std::string());
             text.erase(std::remove(text.begin(), text.end(), '\0'), text.end());
             std::string cksum = parseChecksum(text);
-            std::string value = parseCmd(text);
+            std::cout << "Before parseCMD" << std::endl;
+            std::string value;
+            //if (text.find("REQUUID") != std::string::npos)
+            //{
+              value = nouuid_parseCmd(text);
+            //}
+            //else
+            //{
+            //  value = parseCmd(text);
+            //}
+            std::cout << "After parseCmd" << std::endl;
             int test = check_cksum(cksum, value);
             std::string ret_value = ExecCmd(value);
             std::string out_string = text + " " + ret_value;
-            int len = ret_value.size();
+            std::string UUID;
+            //if (value.compare("REQUUID")!=0)
+            //{
+            //  UUID = std::to_string(parseUUID(text));
+            //}
+            if (value.compare("REQUUID")==0 || value.compare("NICK")==0)
+            {
+              ret_value = value + " " + ret_value;
+            }
+            int len = ret_value.size()+value.size()+1;
             char line[chat_message::max_body_length +1];
             memset(line,0,sizeof(line));
+            //ret_value = UUID + ret_value;
             for (int i=0; i<=len;i++)
             {
               line[i] = ret_value[i];

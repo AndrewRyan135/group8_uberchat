@@ -173,6 +173,30 @@ int parseTime(std::string input){
   int time = std::stoi(temp.substr(0,temp.find(' ')),nullptr,10);
   return time;   
 }
+int parseUUID(std::string input)
+{
+  std::string temp = input.substr(input.find(' ')).erase(0,1);
+  temp = temp.substr(temp.find(' ')).erase(0,1);
+  int UUID = std::stoi(temp.substr(0,temp.find(' ')),nullptr,10);
+  return UUID;
+}
+std::string nouuid_parseCmd(std::string input){
+/*  std::string cmd;
+  std::vector<std::string> results;
+  std::stringstream s(input);
+  while(!s.eof())
+  {
+    std::string tmp;
+    s >> tmp;
+    results.push_back(tmp);
+  }
+*/
+  std::string cmd = input.substr(input.find(' ')).erase(0,1); 
+  //find 2nd space and start a substring at the next index
+  cmd = cmd.substr(cmd.find(' ')).erase(0,1);
+  std::cout<<cmd<<'\n';
+  return cmd;
+}
 
 std::string parseCmd(std::string input){
 /*  std::string cmd;
@@ -187,6 +211,7 @@ std::string parseCmd(std::string input){
 */
   std::string cmd = input.substr(input.find(' ')).erase(0,1); 
   //find 2nd space and start a substring at the next index
+  cmd = cmd.substr(cmd.find(' ')).erase(0,1);
   cmd = cmd.substr(cmd.find(' ')).erase(0,1);
   std::cout<<cmd<<'\n';
   return cmd;
@@ -219,7 +244,7 @@ std::string ExecCmd(std::string cmd){
     std::string name = cmdOption.substr(9,cmd.length()-9);
     int uuid = std::stoi(uuid_str);
     change_nick(uuid, name);
-    return "Nick is " + name;
+    return name;
             
     //debugger print for input after space
     //std::cout<<"Actual input: "<<input<<'\n';

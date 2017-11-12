@@ -20,6 +20,31 @@ using boost::asio::ip::tcp;
 
 typedef std::deque<chat_message> chat_message_queue;
 
+class users_info
+{
+public:
+  std::string get_uuid()
+  {
+    return uuid;
+  }
+  void set_uuid(int in_uuid)
+  {
+    uuid = in_uuid;
+  }
+  std::string get_nick()
+  {
+    return nick;
+  }
+  void set_nick(std::string name)
+  {
+    nick = name;
+  }
+private:
+  std::string uuid, nick;
+};
+
+users_info user;
+
 class chat_client
 {
 public:
@@ -36,7 +61,6 @@ public:
     io_service_.post(
         [this, msg]()
         {
-          std::cout << "I am called in write" << std::endl;
           bool write_in_progress = !write_msgs_.empty();
           write_msgs_.push_back(msg);
           if (!write_in_progress)
@@ -92,30 +116,39 @@ private:
         {
           if (!ec)
           {
-            /*std::stringstream buffer;
+            std::stringstream buffer;
             //std::streambuf* old = std::cout.rdbuf(buffer.rdbuf());
             buffer.write(read_msg_.body(), read_msg_.body_length());
             //std::cout << "\n";
             std::string text = buffer.str();
             buffer.str(std::string());
             text.erase(std::remove(text.begin(), text.end(), '\0'), text.end());
-            std::string time = std::to_string(getTime());
-            std::string value = time + " " + text;
+            std::cout << "I a in do_read_body" << std::endl;
+
+            if (text.find("REQUUID") != std::string::npos)
+            {
+              std::string num = text.substr(8,text.length()-8);
+              user.set_uuid(std::stoi(num));
+              text = text.substr(8,text.length()-8);
+            }
+            if (text.find("NICK") != std::string::npos)
+            {
+              std::string name = text.substr(14,text.length()-14);
+              user.set_nick(name);
+              text = text.substr(14,text.length()-14);
+            }
+
             char line[chat_message::max_body_length+1];
             memset(line,0,sizeof(line));
-            for (int i=0; i<=value.size();i++)
+            for (int i=0; i<=text.size();i++)
             {
-              line[i] = value[i];
+              line[i] = text[i];
             }
             chat_message msg;
             msg.body_length(std::strlen(line));
             std::memcpy(msg.body(), line, msg.body_length());
             msg.encode_header();
             std::cout.write(msg.body(), msg.body_length());
-            std::cout << "\n";
-            do_read_header();*/
-            std::cout << "I am called in do_read_head" << std::endl;
-            std::cout.write(read_msg_.body(), read_msg_.body_length());
             std::cout << "\n";
             do_read_header();
           }

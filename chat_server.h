@@ -11,7 +11,7 @@
 #include <boost/crc.hpp>  //for checksum
 #include <boost/date_time/posix_time/posix_time.hpp> //for time
 
-
+class chatrooms;
 
 class users
 {
@@ -43,16 +43,14 @@ public:
   }
 };
 
-std::vector<std::string> chatrooms_list;
+//std::vector<chatrooms> chatrooms_list;
 std::vector<int> uuid_vector;
 std::vector<users> user_list;
 
 class chatrooms                             // Will get moved to class chat_room
 {
 public:
-  chatrooms(bool in_private_id, std::string in_name) : private_id(in_private_id), name(in_name) {
-    chatrooms_list.push_back(in_name);
-  }
+  chatrooms(bool in_private_id, std::string in_name) : private_id(in_private_id), name(in_name) {}
   void message_backlog(std::string message) //read from the vector from the last element to the first element
   {
     if (messages.size() < 101)
@@ -62,6 +60,7 @@ public:
     else
     {
       messages.erase(messages.begin()+0);
+      messages.push_back(message);
     }
   }
     std::string get_name()
@@ -72,9 +71,6 @@ public:
     {
       return private_id;
     }
-  
-
-
 private:
   bool private_id;
   std::string name;
@@ -82,6 +78,23 @@ private:
   std::vector<std::string> messages;
 };
 
+/*class chat_room
+{
+public:
+  chatrooms(bool in_private_id, std::string in_name)
+  void join(chat_participant_ptr participant);
+  void leave(chat_participant_ptr participant);
+  void deliver(const chat_message& msg);
+  std::string get_name();
+private:
+  bool private_id;
+  std::string name;
+  std::set<chat_participant_ptr> participants_;
+  enum { max_recent_msgs = 100 };
+  chat_message_queue recent_msgs_;
+};*/
+
+std::vector<chatrooms> chatroom_list;
 
 std::string nickname_handle(int uuid)
   {
@@ -124,13 +137,14 @@ void change_nick(int uuid, std::string name)
     user_list.push_back(user);
     return num; 
   }
-  std::vector<std::string> chatroom_handle() //Will provide the vector containing the names of the chat rooms
+  std::vector<chatrooms> chatroom_handle() //Will provide the vector containing the names of the chat rooms
   {
-    return chatrooms_list;
+    return chatroom_list;
   }
-  void create_chatroom(std::string name)
+  void create_chatroom(bool private_id, std::string name)
   {
-
+    chatrooms room(private_id, name);
+    chatroom_list.push_back(room);
   }
 
   std::vector<std::string> request_users()
@@ -268,7 +282,7 @@ std::string ExecCmd(std::string cmd){
     //truncate "NAMECHATROOM " from string
     std::string cmdOption = cmd.substr(13,cmd.length()-13);
 
-    //debugger print
+    create_chatroom(false, cmdOption);
     std::cout<<"NAMECHATROOM ran successfully"<<'\n';
 
     //debugger print for input after space
@@ -317,6 +331,7 @@ std::string ExecCmd(std::string cmd){
     std::cout<<"Error! Your entry does not fit the standard format."<<'\n';
     std::cout<<"Type 'Help' for a list of format and their functions"<<'\n';
   }
+
 }
 
 int getTime(){
@@ -324,12 +339,18 @@ int getTime(){
   //get universal time in millisec
   boost::posix_time::ptime now = boost::posix_time::microsec_clock::universal_time();
   int time = now.time_of_day().total_milliseconds();
+  std::string time_str = std::to_string(time);
+  std::string hour = time_str.substr(0,2);
+  std::string min = time_str.substr(3,4);
+  std::string sec = time_str.substr(5,6);
+  std::string mil = time_str.substr(7,10);
 
   //this bottom code will convert into time of day hr:min:sec
   //boost::posix_time::time_duration time_formated = boost::posix_time::milliseconds(time);
 
   //debugger print
-  //std::cout<<"Time since start of the day(ms): "<<std::dec<<time<<'\n';
+  //std::cout<<std::dec<<time<<'\n';
+  std::cout << time << " ";
 
   return time;
 

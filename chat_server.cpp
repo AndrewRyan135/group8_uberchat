@@ -84,6 +84,25 @@ private:
   chat_message_queue recent_msgs_;
 };
 
+/*void chat_room::join(chat_participant_ptr participant)
+{
+    participants_.insert(participant);
+    for (auto msg: recent_msgs_)
+    participant->deliver(msg);
+}
+void chat_room::leave(chat_participant_ptr participant)
+  {
+    participants_.erase(participant);
+  }
+void chat_room::deliver(const chat_message& msg)
+  {
+    recent_msgs_.push_back(msg);
+    while (recent_msgs_.size() > max_recent_msgs)
+      recent_msgs_.pop_front();
+    for (auto participant: participants_)
+      participant->deliver(msg);
+  }*/
+
 //----------------------------------------------------------------------
 
 class chat_session
@@ -164,10 +183,10 @@ private:
             int test = check_cksum(cksum, value);
             std::string ret_value = ExecCmd(value);
             std::string out_string = text + " " + ret_value;
-            std::string UUID;
+            int UUID;
             if (value.compare("REQUUID")!=0)
             {
-              UUID = std::to_string(parseUUID(text));
+              UUID = parseUUID(text);
             }
             if (value.compare("REQUUID")==0 || value.compare("NICK")==0)
             {
@@ -179,12 +198,15 @@ private:
             std::string name = "no name";
             for (int i = 0; i < user_list.size(); i++)
             {
-              if (user_list[i].get_uuid() == std::stoi(UUID))
+              if (user_list[i].get_uuid() == UUID)
               {
                 name = user_list[i].get_nick();
               }
             }
-            ret_value = name + " " + ret_value;
+            if (value.compare("REQUUID")!=0)
+            {
+              ret_value = name + " " + ret_value;
+            }
             for (int i=0; i<=len;i++)
             {
               line[i] = ret_value[i];

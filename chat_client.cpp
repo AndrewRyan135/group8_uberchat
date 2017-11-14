@@ -117,30 +117,44 @@ private:
         {
           if (!ec)
           {
+
             std::stringstream buffer;
             //std::streambuf* old = std::cout.rdbuf(buffer.rdbuf());
             buffer.write(read_msg_.body(), read_msg_.body_length());
             //std::cout << "\n";
             std::string text = buffer.str();
+
+            std::cout<<"unmodified string comming back: "<<text<<'\n';
+
             buffer.str(std::string());
             text.erase(std::remove(text.begin(), text.end(), '\0'), text.end());
             std::string num;
+            text = timeStamp()+" "+text;
+            /*
             if (text.find("REQUUID") != std::string::npos)
             {
               num = text.substr(8,text.length()-8);
               user.set_uuid(std::stoi(num));
               text = text.substr(8,text.length()-8);
+              std::cout<<"modified string comming back 1: "<<text<<'\n';
             }
+
+            
+
             if (text.find("NICK") != std::string::npos)
             {
               std::string name = text.substr(14,text.length()-14);
               user.set_nick(name);
               text = text.substr(14,text.length()-14);
+              std::cout<<"modified string comming back 2: "<<text<<'\n';
             }
+            */
+
+
 
             char line[chat_message::max_body_length+1];
             memset(line,0,sizeof(line));
-            for (int i=0; i<=text.size();i++)
+            for (unsigned int i=0; i<=text.size();i++)
             {
               line[i] = text[i];
             }
@@ -150,7 +164,6 @@ private:
             msg.encode_header();
             std::cout.write(msg.body(), msg.body_length());
             std::cout << "\n";
-            std::cout << "Finished reading" << std::endl;
             do_read_header();
           }
           else
@@ -220,11 +233,11 @@ int main(int argc, char* argv[])
         //append checksum to front
         str = appendInt(str, cksum);
       }else{      
-        int id = user.get_uuid();
+        //int id = user.get_uuid();
         //get checksum of command only
         int cksum = getChecksum(str);
         //apend uuid to front
-        str = appendInt(str, id);
+        //str = appendInt(str, id);
         //append time to front  
         str = appendInt(str, getTime());
         //append checksum to front

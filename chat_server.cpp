@@ -153,7 +153,7 @@ public:
       deliver(msg);
 
   }else if(cmd.compare("REQCHATROOM")==0){
-      chat_message ret_value = convert_to(room_name);
+      chat_message ret_value = convert_to("REQCHATROOM " + room_name);
       deliver(ret_value);
 
   }else if(cmd.compare("REQCHATROOMS")==0){
@@ -180,6 +180,7 @@ public:
       chatroom_names.push_back(cmdOption);
       std::cout<<"NAMECHATROOM ran successfully"<<'\n';
       std::string ret_value = "Created " + cmdOption;
+      ret_value = "NAMECHATROOM " + ret_value;
       chat_message msg = convert_to(ret_value);
       deliver(msg);
 
@@ -210,7 +211,7 @@ public:
         }
       }
       std::string ret = "Changed to chat room " + name;
-      chat_message msg = convert_to(ret);
+      chat_message msg = convert_to("CHANGECHATROOM " + ret);
       deliver(msg);
       std::cout << "Changed chat rooms" << std::endl;
   }else if(cmd.substr(0,9).compare("SENDTEXT ")==0){                      //SENDTXT
@@ -230,7 +231,7 @@ public:
             chatroom_list[i].message_backlog(cmdOption);
           }
         }
-        chat_message msg = convert_to(cmdOption);
+        chat_message msg = convert_to("SENDTEXT " + cmdOption);
         deliver(msg);
       }
   }else if(cmd.compare("REQTEXT")==0){   
@@ -249,7 +250,7 @@ public:
       {
         ret_value = chatroom_list[pos].get_msg(i);
       }
-      chat_message msg = convert_to(ret_value);
+      chat_message msg = convert_to("REQTEXT " + ret_value);
       deliver(msg);
       std::cout<<"REQTEXT ran successfully"<<'\n';
   }else if(cmd.compare("REQUSERS")==0){  

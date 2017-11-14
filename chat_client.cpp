@@ -140,7 +140,7 @@ private:
 
             char line[chat_message::max_body_length+1];
             memset(line,0,sizeof(line));
-            for (int i=0; i<=text.size();i++)
+            for (unsigned int i=0; i<=text.size();i++)
             {
               line[i] = text[i];
             }
@@ -150,7 +150,6 @@ private:
             msg.encode_header();
             std::cout.write(msg.body(), msg.body_length());
             std::cout << "\n";
-            std::cout << "Finished reading" << std::endl;
             do_read_header();
           }
           else
@@ -220,11 +219,11 @@ int main(int argc, char* argv[])
         //append checksum to front
         str = appendInt(str, cksum);
       }else{      
-        int id = user.get_uuid();
+        //int id = user.get_uuid();
         //get checksum of command only
         int cksum = getChecksum(str);
         //apend uuid to front
-        str = appendInt(str, id);
+        //str = appendInt(str, id);
         //append time to front  
         str = appendInt(str, getTime());
         //append checksum to front

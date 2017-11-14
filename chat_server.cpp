@@ -130,7 +130,10 @@ public:
 
   void ExecCmd(std::string cmd){
   if(cmd == "REQUUID"){
-      //chat_message ret_value = convert_to(std::to_string(uuid));
+      std::string num = std::to_string(uuid);
+      num = "REQUUID " + num;
+      chat_message msg = convert_to(num);
+      deliver(msg);
 
   }else if(cmd.substr(0,5).compare("NICK ")==0){                          //NICK
     
@@ -145,6 +148,7 @@ public:
         }
       }
       user_list.push_back(name);
+      nick = "NICK " + nick;
       chat_message msg = convert_to(nick);
       deliver(msg);
 
@@ -164,6 +168,7 @@ public:
         {
           ret_value = ret_value + "      " + chatroom_names[i] + "\n";
         }
+        ret_value = "REQCHATROOMS " + ret_value;
         chat_message msg = convert_to(ret_value);
         deliver(msg);
         
@@ -262,6 +267,7 @@ public:
       {
         ret_value += chatroom_list[num].get_user(i) + '\n';
       }
+      ret_value = "REQUSERS " + ret_value;
       chat_message msg = convert_to(ret_value);
       deliver(msg);
       std::cout<<"REQUSERS ran successfully"<<'\n';

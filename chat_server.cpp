@@ -209,14 +209,13 @@ public:
       std::cout << "Changed chat rooms" << std::endl;
   }else if(cmd.substr(0,9).compare("SENDTEXT,")==0){                      //SENDTXT
 
-      std::cout<<"SENDTEXT ran successfully"<<'\n';
       std::string cmdOption = cmd.substr(9,cmd.length()-9);
-      cmdOption = nick + "; " + cmdOption; 
+
       if(cmdOption.find(";") != std::string::npos){
         std::cout<<"Error! Message cannot contain ';' in it"<<'\n';   
-      }
-     else{ 
+      }else{ 
         std::cout<<"SENDTEXT ran successfully"<<'\n';
+        cmdOption = nick + "; " + cmdOption; 
         for (unsigned int i = 0; i < chatroom_list.size(); i++)
         {
           if (chatroom_list[i].get_name().compare(room_name)==0)
@@ -343,6 +342,9 @@ private:
             //std::cout << text << std::endl;
             std::string cksum = parseChecksum(text);
             std::string value;
+
+            //int test = check_cksum(cksum, value); //return 1 if checksum not verified
+
             if (text.find("REQUUID") != std::string::npos)
             {
               value = nouuid_parseCmd(text);
@@ -351,10 +353,21 @@ private:
             {
               value = nouuid_parseCmd(text);
             }
-            //int test = check_cksum(cksum, value);
-            self->ExecCmd(value);
 
-            do_read_header();
+            switch(check_cksum(cksum, value)){
+              case 0:
+
+                self->ExecCmd(value);
+                do_read_header();
+                break;
+
+              case 1: 
+                //sends nothing to client
+                //server recieves error message 
+                //and cksum mapping in check_cksum func
+                break;
+            }
+
           }
           else
           {

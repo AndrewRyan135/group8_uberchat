@@ -124,7 +124,7 @@ private:
             //std::cout << "\n";
             std::string text = buffer.str();
 
-            std::cout<<"unmodified string comming back: "<<text<<'\n';
+            //std::cout<<"unmodified string comming back: "<<text<<'\n';
 
             buffer.str(std::string());
             text.erase(std::remove(text.begin(), text.end(), '\0'), text.end());
@@ -225,6 +225,7 @@ int main(int argc, char* argv[])
     {
      //temp checksum and time
       std::string str = line;
+      str = convert_OptionalCmd(str);
 
       if (str.compare("REQUUID")==0){
         int cksum = getChecksum(str);

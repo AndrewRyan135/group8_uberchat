@@ -46,29 +46,29 @@ std::string convert_from(chat_message msg)
 
 std::string parseChecksum(std::string input){
   //get everything up to first space
-  std::string checksum = input.substr(0,input.find(' '));
+  std::string checksum = input.substr(0,input.find(','));
   return checksum;
 }
 
 int parseTime(std::string input){
   //find first space and start a substring at the next index
-  std::string temp = input.substr(input.find(' ')).erase(0,1); 
+  std::string temp = input.substr(input.find(',')).erase(0,1); 
   //take everything up until 2nd space and convert to int in base 10
-  int time = std::stoi(temp.substr(0,temp.find(' ')),nullptr,10);
+  int time = std::stoi(temp.substr(0,temp.find(',')),nullptr,10);
   return time;   
 }
 int parseUUID(std::string input)
 {
-  std::string temp = input.substr(input.find(' ')).erase(0,1);
-  temp = temp.substr(temp.find(' ')).erase(0,1);
-  int UUID = std::stoi(temp.substr(0,temp.find(' ')),nullptr,10);
+  std::string temp = input.substr(input.find(',')).erase(0,1);
+  temp = temp.substr(temp.find(',')).erase(0,1);
+  int UUID = std::stoi(temp.substr(0,temp.find(',')),nullptr,10);
   return UUID;
 }
 std::string nouuid_parseCmd(std::string input){
 
-  std::string cmd = input.substr(input.find(' ')).erase(0,1); 
+  std::string cmd = input.substr(input.find(',')).erase(0,1); 
   //find 2nd space and start a substring at the next index
-  cmd = cmd.substr(cmd.find(' ')).erase(0,1);
+  cmd = cmd.substr(cmd.find(',')).erase(0,1);
   std::cout<<cmd<<'\n';
   return cmd;
 }
@@ -77,8 +77,8 @@ std::string parseCmd(std::string input){
 
   std::string cmd = input.substr(input.find(' ')).erase(0,1); 
   //find 2nd space and start a substring at the next index
-  cmd = cmd.substr(cmd.find(' ')).erase(0,1);
-  cmd = cmd.substr(cmd.find(' ')).erase(0,1);
+  cmd = cmd.substr(cmd.find(',')).erase(0,1);
+  cmd = cmd.substr(cmd.find(',')).erase(0,1);
   std::cout<<cmd<<'\n';
   return cmd;
 
@@ -92,12 +92,7 @@ int getTime(){
   //get universal time in millisec
   boost::posix_time::ptime now = boost::posix_time::microsec_clock::universal_time();
   int time = now.time_of_day().total_milliseconds();
-  std::string time_str = std::to_string(time);
-  std::string hour = time_str.substr(0,2);
-  std::string min = time_str.substr(3,4);
-  std::string sec = time_str.substr(5,6);
-  std::string mil = time_str.substr(7,10);
-
+  
   //this bottom code will convert into time of day hr:min:sec
   //boost::posix_time::time_duration time_formated = boost::posix_time::milliseconds(time);
 
@@ -126,7 +121,7 @@ int getChecksum(const std::string& str){
 //appends the int as a string to the front
 std::string appendInt(std::string input, int num){
   std::string num_str = std::to_string(num);
-  std::string result = num_str+" "+input;
+  std::string result = num_str+","+input;
   //debugger print
   //std::cout<<"current processed string: "<<result<<'\n';
   return result;
@@ -154,10 +149,29 @@ std::string timeStamp(){
   std::string sec = std::to_string(((time_ms%3600000)%60000)/1000);
   std::string ms = std::to_string((((time_ms%3600000)%60000)%1000));
 
-  std::string result = "Time: "+hr+":"+min+":"+sec+"."+ms;
+  std::string result = "Universal Time: "+hr+"hr:"+min+"min:"+sec+"."+ms+"s";
 
   //debugger print 
-  std::cout<<"time: "<<result<<'\n';
+  //std::cout<<result<<'\n';
 
   return result;
+}
+
+//replace space between command and optional command if there is any
+std::string convert_OptionalCmd(std::string input){
+  
+  std::string output;
+
+  if (input.substr(0,5).compare("NICK ")==0){
+    output = input.replace(4,1,",");
+  }else if(input.substr(0,13).compare("NAMECHATROOM ")==0){
+    output = input.replace(12,1,",");
+  }else if (input.substr(0,9).compare("SENDTEXT ")==0){
+    output = input.replace(8,1,",");
+  }else{
+    output = input; //no optional command hence no changes
+  }
+  //debugger print
+  //std::cout<<"convert_optionalCmd returned: "<<output<<'\n';
+  return output;
 }

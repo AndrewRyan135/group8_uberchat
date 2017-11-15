@@ -131,8 +131,7 @@ public:
   void ExecCmd(std::string cmd){
   if(cmd == "REQUUID"){
       //chat_message ret_value = convert_to(std::to_string(uuid));
-
-  }else if(cmd.substr(0,5).compare("NICK ")==0){                          //NICK
+  }else if(cmd.substr(0,5).compare("NICK,")==0){                          //NICK
     
       std::string name = cmd.substr(5,cmd.length()-5);
       std::cout<<"NICK ran successfully"<<'\n';
@@ -168,7 +167,7 @@ public:
         deliver(msg);
         
       }
-  }else if(cmd.substr(0,13).compare("NAMECHATROOM ")==0){
+  }else if(cmd.substr(0,13).compare("NAMECHATROOM,")==0){
       std::string cmdOption = cmd.substr(13,cmd.length()-13);
       chatrooms room(cmdOption);
       chatroom_list.push_back(room);
@@ -208,11 +207,11 @@ public:
       chat_message msg = convert_to(ret);
       deliver(msg);
       std::cout << "Changed chat rooms" << std::endl;
-  }else if(cmd.substr(0,9).compare("SENDTEXT ")==0){                      //SENDTXT
+  }else if(cmd.substr(0,9).compare("SENDTEXT,")==0){                      //SENDTXT
 
       std::cout<<"SENDTEXT ran successfully"<<'\n';
       std::string cmdOption = cmd.substr(9,cmd.length()-9);
-      cmdOption = nick + ": " + cmdOption; 
+      cmdOption = nick + "; " + cmdOption; 
       if(cmdOption.find(";") != std::string::npos){
         std::cout<<"Error! Message cannot contain ';' in it"<<'\n';   
       }
@@ -267,7 +266,6 @@ public:
       std::cout<<"REQUSERS ran successfully"<<'\n';
   }else{
       std::cout<<"Error! Your entry does not fit the standard format."<<'\n';
-      std::cout<<"Type 'Help' for a list of format and their functions"<<'\n';
   }
 
 }

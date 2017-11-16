@@ -125,19 +125,6 @@ private:
             buffer.str(std::string());
             text.erase(std::remove(text.begin(), text.end(), '\0'), text.end());
             std::string num;
-            if (text.find("REQUUID") != std::string::npos)
-            {
-              num = text.substr(8,text.length()-8);
-              user.set_uuid(std::stoi(num));
-              text = text.substr(8,text.length()-8);
-            }
-            if (text.find("NICK") != std::string::npos)
-            {
-              std::string name = text.substr(14,text.length()-14);
-              user.set_nick(name);
-              text = text.substr(14,text.length()-14);
-            }
-
             char line[chat_message::max_body_length+1];
             memset(line,0,sizeof(line));
             for (unsigned int i=0; i<=text.size();i++)
@@ -211,6 +198,7 @@ int main(int argc, char* argv[])
     {
      //temp checksum and time
       std::string str = line;
+      str = convert_OptionalCmd(str);
 
       if (str.compare("REQUUID")==0){
         int cksum = getChecksum(str);
@@ -238,7 +226,7 @@ int main(int argc, char* argv[])
       msg.body_length(std::strlen(line));
       std::memcpy(msg.body(), line, msg.body_length());
       msg.encode_header();
-      c.write(msg);
+c.write(msg);
        
     }
 

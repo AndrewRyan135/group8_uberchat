@@ -135,7 +135,7 @@ public:
       chat_message msg = convert_to(num);
       deliver(msg);
 
-  }else if(cmd.substr(0,5).compare("NICK ")==0){                          //NICK
+  }else if(cmd.substr(0,4).compare("NICK")==0){                          //NICK
     
       std::string name = cmd.substr(5,cmd.length()-5);
       std::cout<<"NICK ran successfully"<<'\n';
@@ -173,7 +173,7 @@ public:
         deliver(msg);
         
       }
-  }else if(cmd.substr(0,13).compare("NAMECHATROOM ")==0){
+  }else if(cmd.substr(0,12).compare("NAMECHATROOM")==0){
       std::string cmdOption = cmd.substr(13,cmd.length()-13);
       chatrooms room(cmdOption);
       chatroom_list.push_back(room);
@@ -214,7 +214,7 @@ public:
       chat_message msg = convert_to("CHANGECHATROOM " + ret);
       deliver(msg);
       std::cout << "Changed chat rooms" << std::endl;
-  }else if(cmd.substr(0,9).compare("SENDTEXT ")==0){                      //SENDTXT
+  }else if(cmd.substr(0,8).compare("SENDTEXT")==0){                      //SENDTXT
 
       std::cout<<"SENDTEXT ran successfully"<<'\n';
       std::string cmdOption = cmd.substr(9,cmd.length()-9);
@@ -349,7 +349,7 @@ private:
           if (!ec)
           {
             std::string text = convert_from(read_msg_);
-            //std::cout << text << std::endl;
+            std::cout << text << std::endl;
             std::string cksum = parseChecksum(text);
             std::string value;
             if (text.find("REQUUID") != std::string::npos)

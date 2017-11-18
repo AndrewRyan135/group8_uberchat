@@ -219,7 +219,6 @@ int main(int argc, char* argv[])
     chat_client c(io_service, endpoint_iterator);
 
     std::thread t([&io_service](){ io_service.run(); });
-
     char line[chat_message::max_body_length + 1];
     while (std::cin.getline(line, chat_message::max_body_length + 1))
     {

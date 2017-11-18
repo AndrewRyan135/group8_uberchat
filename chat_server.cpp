@@ -339,7 +339,7 @@ private:
           if (!ec)
           {
             std::string text = convert_from(read_msg_);
-            //std::cout << text << std::endl;
+            std::cout << text << std::endl;
             std::string cksum = parseChecksum(text);
             std::string value;
 

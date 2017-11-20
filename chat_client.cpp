@@ -226,7 +226,7 @@ int main(int argc, char* argv[])
       msg.body_length(std::strlen(line));
       std::memcpy(msg.body(), line, msg.body_length());
       msg.encode_header();
-c.write(msg);
+      c.write(msg);
        
     }
 

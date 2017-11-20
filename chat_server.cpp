@@ -104,9 +104,9 @@ public:
   chat_participant()
   {
     uuid = requuid_handle();
-    room_name = "Main";
-    std::cout << "UUID " << uuid << " Chat room " << room_name << std::endl;
-    chessage_ptr = 0;
+    room_name = "the lobby";
+    //std::cout << "UUID " << uuid << " Chat room " << room_name << std::endl;
+    message_ptr = 0;
   }
   ~chat_participant() {}
   virtual void deliver(const chat_message& msg) = 0;
@@ -361,9 +361,28 @@ private:
               value = nouuid_parseCmd(text);
             }
             //int test = check_cksum(cksum, value);
-            self->ExecCmd(value);
+            if (text.find("REQUUID") != std::string::npos)
+            {
+              value = nouuid_parseCmd(text);
+            }
+            else
+            {
+              value = nouuid_parseCmd(text);
+            }
 
-            do_read_header();
+            switch(check_cksum(cksum, value)){
+              case 0:
+
+                self->ExecCmd(value);
+                do_read_header();
+                break;
+
+              case 1: 
+                //sends nothing to client
+                //server recieves error message 
+                //and cksum mapping in check_cksum func
+                break;
+            }
           }
           else
           {

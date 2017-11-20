@@ -42,8 +42,8 @@ std::vector<chatrooms> chatroom_list;
 std::vector<std::string> user_list;
 //----------------------------------------------------------------------
 
-class chatrooms                             
-{
+class chatrooms                                                               //Contains the chatrooms information and all the methods needed to proper keep the room uptodate and
+{                                                                             //function properly.
 public:
   chatrooms(std::string in_name) : name(in_name) {}
   void message_backlog(std::string message) //read from the vector from the last element to the first element
@@ -98,15 +98,15 @@ private:
   std::vector<std::string> messages;
 };
 
-class chat_participant
-{
+class chat_participant                                                       //Holds the information protaining to the user and also contains the fuction that will process all the commands
+{                                                                            //since the information needed is stored here so it allows for less code to recieve this data.
 public:
   chat_participant()
   {
     uuid = requuid_handle();
     room_name = "Main";
     std::cout << "UUID " << uuid << " Chat room " << room_name << std::endl;
-    index = 0;
+    chessage_ptr = 0;
   }
   ~chat_participant() {}
   virtual void deliver(const chat_message& msg) = 0;
@@ -212,6 +212,7 @@ public:
       }
       std::string ret = "Changed to chat room " + name;
       chat_message msg = convert_to("CHANGECHATROOM " + ret);
+      message_ptr = 0;
       deliver(msg);
       std::cout << "Changed chat rooms" << std::endl;
   }else if(cmd.substr(0,8).compare("SENDTEXT")==0){                      //SENDTXT
@@ -246,10 +247,11 @@ public:
           num = chatroom_list[i].msg_size();
         }
       }                               
-      for (int i = index; i < num; i++)
+      for (int i = message_ptr; i < num; i++)
       {
         ret_value = chatroom_list[pos].get_msg(i);
       }
+      message_ptr = chatroom_list[num].msg_size();
       chat_message msg = convert_to("REQTEXT " + ret_value);
       deliver(msg);
       std::cout<<"REQTEXT ran successfully"<<'\n';
@@ -282,7 +284,7 @@ private:
   std::string room_name;
   int uuid;
   std::string nick;
-  int index;
+  int message_ptr;
 };
 
 typedef std::shared_ptr<chat_participant> chat_participant_ptr;
@@ -304,7 +306,6 @@ public:
 
   void start()
   {
-    //room_.join(shared_from_this());
     do_read_header();
   }
 
@@ -332,7 +333,6 @@ private:
           }
           else
           {
-            //room_.leave(shared_from_this());
 
           }
         });
@@ -391,8 +391,6 @@ private:
           }
           else
           {
-            //room_.leave(shared_from_this());
-            std::cout << "Leaving" << std::endl;
           }
         });
   }
@@ -412,9 +410,9 @@ public:
     : acceptor_(io_service, endpoint),
       socket_(io_service)
   {
-    chatrooms room("Main");
+    chatrooms room("the lobby");
     chatroom_list.push_back(room);
-    chatroom_names.push_back("Main");
+    chatroom_names.push_back("the lobby");
     do_accept();
   }
 
@@ -439,7 +437,7 @@ private:
 
 //----------------------------------------------------------------------
 
-  int requuid_handle()
+  int requuid_handle()                                                                //Provides a uuid when requested
   {
     bool val = false;
     int num = 0000;

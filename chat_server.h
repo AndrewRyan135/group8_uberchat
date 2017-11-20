@@ -14,11 +14,10 @@
 
 class chatrooms;
 
-//std::vector<chatrooms> chatrooms_list;
-std::vector<int> uuid_vector;
-//std::vector<users> user_list;
 
-chat_message convert_to(std::string input)
+std::vector<int> uuid_vector;
+
+chat_message convert_to(std::string input)        //Converts the string input into a chat_message
 {
   char line[chat_message::max_body_length +1];
   memset(line,0,sizeof(line));
@@ -33,7 +32,7 @@ chat_message convert_to(std::string input)
   return msg;
 }
 
-std::string convert_from(chat_message msg)
+std::string convert_from(chat_message msg)      //Converts chat_message to a string
 {
   std::stringstream buffer;
   buffer.write(msg.body(), msg.body_length());
@@ -44,27 +43,27 @@ std::string convert_from(chat_message msg)
 }
 
 
-std::string parseChecksum(std::string input){
+std::string parseChecksum(std::string input){                   //Parses the checksum from the input string
   //get everything up to first space
   std::string checksum = input.substr(0,input.find(','));
   return checksum;
 }
 
-int parseTime(std::string input){
+int parseTime(std::string input){                               //Parses the time from the input string
   //find first space and start a substring at the next index
   std::string temp = input.substr(input.find(',')).erase(0,1); 
   //take everything up until 2nd space and convert to int in base 10
   int time = std::stoi(temp.substr(0,temp.find(',')),nullptr,10);
   return time;   
 }
-int parseUUID(std::string input)
+int parseUUID(std::string input)                                 //Parses the UUID from the input string
 {
   std::string temp = input.substr(input.find(',')).erase(0,1);
   temp = temp.substr(temp.find(',')).erase(0,1);
   int UUID = std::stoi(temp.substr(0,temp.find(',')),nullptr,10);
   return UUID;
 }
-std::string nouuid_parseCmd(std::string input){
+std::string nouuid_parseCmd(std::string input){                  //Parses the command where there is no uuid passes
 
   std::string cmd = input.substr(input.find(',')).erase(0,1); 
   //find 2nd space and start a substring at the next index
@@ -73,7 +72,7 @@ std::string nouuid_parseCmd(std::string input){
   return cmd;
 }
 
-std::string parseCmd(std::string input){
+std::string parseCmd(std::string input){                         //Parses the command when there is a uuid provided
 
   std::string cmd = input.substr(input.find(',')).erase(0,1); 
   //find 2nd space and start a substring at the next index
@@ -86,7 +85,7 @@ std::string parseCmd(std::string input){
   //return results[2];
 }
 
-int getTime(){
+int getTime(){                                                                          //Gets the current time
   
   //get universal time in millisec
   boost::posix_time::ptime now = boost::posix_time::microsec_clock::universal_time();
@@ -108,7 +107,7 @@ int getTime(){
 
 }
 
-int getChecksum(const std::string& str){
+int getChecksum(const std::string& str){                                                                  //gets the checksum for the message
   //crc_32_type is typedef as crc_optimal(32, 0x04C11DB7, 0xFFFFFFFF, 0xFFFFFFFF, true, true) in boost
   boost::crc_32_type cksum;
   //turn string into an array of char of data's ascii and process it
@@ -132,7 +131,7 @@ std::string appendInt(std::string input, int num){
 }
 
 //return 0 for okay, 1 for corruption
-int check_cksum(std::string cksum, std::string cmd){
+int check_cksum(std::string cksum, std::string cmd){                                        //checkes the check sum to see if it is correct
   int newCksum = getChecksum(cmd);
   int expected = atoi(cksum.c_str());
   if(newCksum == expected){
@@ -146,7 +145,7 @@ int check_cksum(std::string cksum, std::string cmd){
   }
 }
 
-std::string timeStamp(){
+std::string timeStamp(){                                                                    //appends the time to a message
   int time_ms = getTime();
   std::string hr = std::to_string(time_ms/(3600000));
   std::string min = std::to_string((time_ms%3600000)/60000);
@@ -162,7 +161,7 @@ std::string timeStamp(){
 }
 
 //replace space between command and optional command if there is any
-std::string convert_OptionalCmd(std::string input){
+std::string convert_OptionalCmd(std::string input){                                         //parses the optional arguments from the input
   
   std::string output;
 

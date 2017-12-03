@@ -48,9 +48,9 @@ Fl_Window c_room (300, 100, "Create Room");
 Fl_Input input3 (100, 20, 100, 25, "Room Name");
 Fl_Button make (100, 50, 50, 25, "Submit");
 
-Fl_Window j_room (500, 100, "Join Room");
+Fl_Window j_room (500, 500, "Join Room");
 Fl_Input input4 (300, 20, 100, 25, "Room Name");
-Fl_Multiline_Output rooms(50, 20, 200, 70, "Rooms");
+Fl_Multiline_Output rooms(50, 20, 200, 450, "Rooms");
 Fl_Button enter (300, 50, 50, 25, "Submit");
 
 Fl_Window c_nick (250, 100, "Change Nick");
@@ -152,9 +152,13 @@ if(S.substr(0,12).compare("REQCHATROOM ")==0)
 }
 if(S.substr(0,13).compare("REQCHATROOMS ")==0)
 {
-  int pos = S.rfind("REQCHATROOMS");
+  while(S.find("REQCHATROOMS ") != std::string::npos)
+  {
+    int p = S.find("REQCHATROOMS ");
+    S.erase(p, 13);
+  }
   rooms.value(NULL);
-  rooms.value(S.substr(pos+13, S.length()-pos+13).c_str());
+  rooms.value(S.substr(13, S.length()-13).c_str());
   
 }
 if(S.substr(0,13).compare("NAMECHATROOM ")==0)
@@ -165,8 +169,13 @@ if(S.substr(0,15).compare("CHANGECHATROOM ")==0)
 }
 if(S.substr(0,9).compare("REQUSERS ")==0)
 {
-  int p = S.rfind("NICK");
-  users.value(S.substr(p+5,S.length()-p+5).c_str());
+  while(S.find("NICK ") != std::string::npos)
+  {
+    int i = S.find("NICK ");
+    S.erase(i, 5);
+  }
+  std::cout << S << std::endl;
+  users.value(S.substr(9,S.length()-9).c_str());
 }
 if(S.substr(0,8).compare("REQTEXT ")==0)
 {
@@ -182,7 +191,6 @@ if(S.substr(0,8).compare("REQTEXT ")==0)
   }
   if((m.length()>2)&&(m.compare(lastsent)!=0))
   {
-    printf("here\n");
     lastsent = m;
     if (buff)
     {

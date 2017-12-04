@@ -35,15 +35,18 @@ using boost::asio::ip::tcp;
 typedef std::deque<chat_message> chat_message_queue;
 std::string ExecCmd(std::string cmd);
 int requuid_handle();
+void invalid_operation(std::string input);
 class chatrooms;
+class chat_participant ;
 
 std::vector<std::string> chatroom_names;
 std::vector<chatrooms> chatroom_list;
 std::vector<std::string> user_list;
+std::vector<int> uuid_list;
 //----------------------------------------------------------------------
 
 class chatrooms                                                               //Contains the chatrooms information and all the methods needed to proper keep the room uptodate and
-{                                                                             //function properly.
+{                                                                             //function properly.                                                                    
 public:
   chatrooms(std::string in_name) : name(in_name) {}
   void message_backlog(std::string message) //read from the vector from the last element to the first element
@@ -60,7 +63,7 @@ public:
   }
   void add_user(std::string name)
   {
-    chatroom_users.push_back(name);
+      chatroom_users.push_back(name);
   }
   void remove_user(std::string name)
   {
@@ -138,18 +141,37 @@ public:
   }else if(cmd.substr(0,4).compare("NICK")==0){                          //NICK
     
       std::string name = cmd.substr(5,cmd.length()-5);
-      std::cout<<"NICK ran successfully"<<'\n';
+      //std::cout<<"NICK ran successfully"<<'\n';
+      int num = 0;
+      chat_message msg;
       nick = name;
-      for (unsigned int i = 0; i < chatroom_list.size(); i++)
+      for (unsigned int i = 0; i < user_list.size(); i++)
       {
-        if (chatroom_list[i].get_name().compare(room_name)==0)
+        if (user_list[i].compare(name)==0)
         {
-          chatroom_list[i].add_user(nick);
+          srand(time(NULL));
+          num = rand()%100;
+          if (nick.compare("")==0)
+          {
+            user_list.push_back(name + std::to_string(num));
+          }
+          nick = name + std::to_string(num);
         }
       }
-      user_list.push_back(name);
-      nick = "NICK " + nick;
-      chat_message msg = convert_to(nick);
+      if (nick.compare(name+std::to_string(num))!=0)
+      {
+        user_list.push_back(name);
+        nick = name;
+      }
+      for (unsigned int i = 0; i < chatroom_list.size(); i++)
+        {
+          if (chatroom_list[i].get_name().compare(room_name)==0)
+          {
+            chatroom_list[i].add_user(nick);
+          }
+        }
+      std::string output = "NICK " + nick;
+      msg = convert_to(output);
       deliver(msg);
 
   }else if(cmd.compare("REQCHATROOM")==0){
@@ -174,13 +196,27 @@ public:
         
       }
   }else if(cmd.substr(0,12).compare("NAMECHATROOM")==0){
+    int flag = 0;
+    std::string ret_value;
       std::string cmdOption = cmd.substr(13,cmd.length()-13);
-      chatrooms room(cmdOption);
-      chatroom_list.push_back(room);
-      chatroom_names.push_back(cmdOption);
-      std::cout<<"NAMECHATROOM ran successfully"<<'\n';
-      std::string ret_value = "Created " + cmdOption;
-      ret_value = "NAMECHATROOM " + ret_value;
+      for (unsigned int i = 0; i < chatroom_names.size(); i++)
+      {
+        if (chatroom_names[i].compare(cmdOption)==0)
+        {
+          flag = 1;
+        }
+      }
+      if (flag == 0)
+      {
+        chatrooms room(cmdOption);
+        chatroom_list.push_back(room);
+        chatroom_names.push_back(cmdOption);
+        ret_value = "NAMECHATROOM " + cmdOption;
+      }
+      else
+      {
+        ret_value = "NAMECHATROOM Name already exists, please enter a new name";
+      }
       chat_message msg = convert_to(ret_value);
       deliver(msg);
 
@@ -220,6 +256,7 @@ public:
       std::cout<<"SENDTEXT ran successfully"<<'\n';
       std::string cmdOption = cmd.substr(9,cmd.length()-9);
       cmdOption = nick + ": " + cmdOption; 
+      cmdOption = " " + cmdOption;
       if(cmdOption.find(";") != std::string::npos){
         std::cout<<"Error! Message cannot contain ';' in it"<<'\n';   
       }
@@ -236,9 +273,10 @@ public:
         deliver(msg);
       }
   }else if(cmd.compare("REQTEXT")==0){   
-      int num;
-      int pos;
+      int num = 0;
+      int pos = 0;
       std::string ret_value;
+      std::cout << "First loop" << std::endl;
       for (unsigned int i = 0; i < chatroom_list.size(); i++)
       {
         if (chatroom_list[i].get_name().compare(room_name)==0)
@@ -246,12 +284,15 @@ public:
           pos = i;
           num = chatroom_list[i].msg_size();
         }
-      }                               
+      }  
+      std::cout << "Second loop" << "\n" << message_ptr << "\n" << num << std::endl;                            
       for (int i = message_ptr; i < num; i++)
       {
-        ret_value = chatroom_list[pos].get_msg(i);
+        ret_value += chatroom_list[pos].get_msg(i) + "\n";
       }
-      message_ptr = chatroom_list[num].msg_size();
+      std::cout << chatroom_list[pos].msg_size() << std::endl;
+      
+      message_ptr = chatroom_list[pos].msg_size();
       chat_message msg = convert_to("REQTEXT " + ret_value);
       deliver(msg);
       std::cout<<"REQTEXT ran successfully"<<'\n';
@@ -306,6 +347,7 @@ public:
 
   void start()
   {
+    //room_.join(shared_from_this());
     do_read_header();
   }
 
@@ -333,6 +375,7 @@ private:
           }
           else
           {
+            //room_.leave(shared_from_this());
 
           }
         });
@@ -352,15 +395,9 @@ private:
             std::cout << text << std::endl;
             std::string cksum = parseChecksum(text);
             std::string value;
-            if (text.find("REQUUID") != std::string::npos)
-            {
-              value = nouuid_parseCmd(text);
-            }
-            else
-            {
-              value = nouuid_parseCmd(text);
-            }
-            //int test = check_cksum(cksum, value);
+
+            //int test = check_cksum(cksum, value); //return 1 if checksum not verified
+
             if (text.find("REQUUID") != std::string::npos)
             {
               value = nouuid_parseCmd(text);
@@ -383,6 +420,7 @@ private:
                 //and cksum mapping in check_cksum func
                 break;
             }
+
           }
           else
           {
@@ -410,6 +448,8 @@ private:
           }
           else
           {
+            //room_.leave(shared_from_this());
+            std::cout << "Leaving" << std::endl;
           }
         });
   }
@@ -464,7 +504,7 @@ private:
     {
       srand(time(NULL));
       num = rand()%1000000000;
-      if (std::find(uuid_vector.begin(), uuid_vector.end(), num) != uuid_vector.end())
+      if (std::find(uuid_list.begin(), uuid_list.end(), num) != uuid_list.end())
       {
         
       }
@@ -473,11 +513,9 @@ private:
         val = true;
       }
     }
-    //chat_participant user;
-    //user_list.push_back(user);
+    uuid_list.push_back(num);
     return num; 
   }
-
 //--------------------------------------------------------------------------
 
 

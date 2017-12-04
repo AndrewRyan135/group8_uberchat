@@ -88,7 +88,8 @@ private:
           if (!ec)
           {
             //std::cout.write(read_msg_.body(), read_msg_.body_length());
-	    data_recv_ ( read_msg_.body() );
+      read_msg_.body()[read_msg_.body_length()] = '\0';
+      data_recv_ ( read_msg_.body() );
             do_read_header();
           }
           else

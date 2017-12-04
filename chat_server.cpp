@@ -134,11 +134,13 @@ public:
   void ExecCmd(std::string cmd){
   if(cmd == "REQUUID"){
       std::string num = std::to_string(uuid);
-      num = "REQUUID " + num;
-      chat_message msg = convert_to(num);
+      num = "REQUUID," + num;
+      std::string time = timeStamp();
+      std::string check_sum = std::to_string(getChecksum(time+","+"REQUUID,"+num));
+      chat_message msg = convert_to(check_sum + "," + time + "," + "REQUUID," +  num);
       deliver(msg);
 
-  }else if(cmd.substr(0,4).compare("NICK")==0){                          //NICK
+  }else if(cmd.find("NICK,") != std::string::npos){                          //NICK
     
       std::string name = cmd.substr(5,cmd.length()-5);
       //std::cout<<"NICK ran successfully"<<'\n';
@@ -170,12 +172,17 @@ public:
             chatroom_list[i].add_user(nick);
           }
         }
-      std::string output = "NICK " + nick;
-      msg = convert_to(output);
+      std::string time = timeStamp();
+      std::string check_sum = std::to_string(getChecksum(time+","+"NICK,"+nick));
+      std::string output = "NICK," + nick;
+      msg = convert_to(check_sum + "," + time + "," + output);
       deliver(msg);
 
   }else if(cmd.compare("REQCHATROOM")==0){
-      chat_message ret_value = convert_to("REQCHATROOM " + room_name);
+      
+      std::string time = timeStamp();
+      std::string check_sum = std::to_string(getChecksum(time+","+"REQCHATROOM,"+room_name));
+      chat_message ret_value = convert_to(check_sum + "," + time + "," + "REQCHATROOM," + room_name);
       deliver(ret_value);
 
   }else if(cmd.compare("REQCHATROOMS")==0){
@@ -190,8 +197,9 @@ public:
         {
           ret_value = ret_value + "      " + chatroom_names[i] + "\n";
         }
-        ret_value = "REQCHATROOMS " + ret_value;
-        chat_message msg = convert_to(ret_value);
+        std::string time = timeStamp();
+        std::string check_sum = std::to_string(getChecksum(time+","+"REQCHATROOMS,"+ret_value));
+        chat_message msg = convert_to(check_sum + "," + time + "," + "REQCHATROOMS," + ret_value);
         deliver(msg);
         
       }
@@ -208,6 +216,7 @@ public:
       }
       if (flag == 0)
       {
+        std::cout << "This is the name of the chatroom " << cmdOption << std::endl;
         chatrooms room(cmdOption);
         chatroom_list.push_back(room);
         chatroom_names.push_back(cmdOption);
@@ -222,34 +231,50 @@ public:
 
   }else if(cmd.substr(0,14).compare("CHANGECHATROOM")==0){
       std::string name = cmd.substr(15,cmd.length()-15);
+      int flag = 0;
       for (unsigned int i = 0; i < chatroom_list.size(); i++)
       {
-        std::cout << chatroom_list[i].get_name() << std::endl;
-        if (chatroom_list[i].get_name().compare(room_name)==0)
+        std::cout << "The value of flag is " << flag <<std::endl;
+        if (chatroom_list[i].get_name().compare(name)==0)
         {
-          for (int j = 0; j < chatroom_list[i].num_users(); i++)
+          flag = 1;
+        }
+      }
+      if (flag == 1)
+      {
+        for (unsigned int i = 0; i < chatroom_list.size(); i++)
+        {
+          std::cout << chatroom_list[i].get_name() << std::endl;
+          if (chatroom_list[i].get_name().compare(room_name)==0)
           {
-            if (chatroom_list[i].get_user(j).compare(nick)==0)
+            for (int j = 0; j < chatroom_list[i].num_users(); j++)
             {
-              std::cout << chatroom_list[i].get_name() << " " << nick << std::endl;
-              chatroom_list[i].remove_user(nick);
+              if (chatroom_list[i].get_user(j).compare(nick)==0)
+              {
+                std::cout << chatroom_list[i].get_name() << " " << nick << std::endl;
+                chatroom_list[i].remove_user(nick);
+                std::cout << "After removing the user" << std::endl;
+              }
             }
           }
         }
-      }
-      room_name = name;
-      for (unsigned int i = 0; i < chatroom_list.size(); i++)
-      {
-        if (room_name.compare(chatroom_list[i].get_name())==0)
+        room_name = name;
+        for (unsigned int i = 0; i < chatroom_list.size(); i++)
         {
-          std::cout << room_name << std::endl;
-          chatroom_list[i].add_user(nick);
+          if (room_name.compare(chatroom_list[i].get_name())==0)
+          {
+            std::cout << "Added " << nick << "to " << chatroom_list[i].get_name() << std::endl;
+            chatroom_list[i].add_user(nick);
+          }
         }
+        std::cout << "I update the chatroom in the server" << std::endl;
+        std::string ret = "Changed to chat room " + name;
+        std::string time = timeStamp();
+        std::string check_sum = std::to_string(getChecksum(time+","+"CHANGECHATROOM,"+ret));
+        chat_message msg = convert_to(check_sum + "," + time + "," + "CHANGECHATROOM," + ret);
+        message_ptr = 0;
+        deliver(msg);
       }
-      std::string ret = "Changed to chat room " + name;
-      chat_message msg = convert_to("CHANGECHATROOM " + ret);
-      message_ptr = 0;
-      deliver(msg);
       std::cout << "Changed chat rooms" << std::endl;
   }else if(cmd.substr(0,8).compare("SENDTEXT")==0){                      //SENDTXT
 
@@ -257,6 +282,7 @@ public:
       std::string cmdOption = cmd.substr(9,cmd.length()-9);
       cmdOption = nick + ": " + cmdOption; 
       cmdOption = " " + cmdOption;
+      std::string time_1 = timeStamp() + ",";
       if(cmdOption.find(";") != std::string::npos){
         std::cout<<"Error! Message cannot contain ';' in it"<<'\n';   
       }
@@ -266,15 +292,19 @@ public:
         {
           if (chatroom_list[i].get_name().compare(room_name)==0)
           {
-            chatroom_list[i].message_backlog(cmdOption);
+            chatroom_list[i].message_backlog(time_1 + cmdOption + "\n");
           }
         }
-        chat_message msg = convert_to("SENDTEXT " + cmdOption);
+        std::string time = timeStamp();
+        std::string check_sum = std::to_string(getChecksum(time+","+"SENDTEXT,"+cmdOption));
+        chat_message msg = convert_to(check_sum + "," + time + "," + "SENDTEXT," + cmdOption);
+        //std::cout << cmdOption << std::endl;
         deliver(msg);
       }
   }else if(cmd.compare("REQTEXT")==0){   
       int num = 0;
       int pos = 0;
+      int flag = 0;
       std::string ret_value;
       std::cout << "First loop" << std::endl;
       for (unsigned int i = 0; i < chatroom_list.size(); i++)
@@ -288,13 +318,25 @@ public:
       std::cout << "Second loop" << "\n" << message_ptr << "\n" << num << std::endl;                            
       for (int i = message_ptr; i < num; i++)
       {
-        ret_value += chatroom_list[pos].get_msg(i) + "\n";
+        ret_value += chatroom_list[pos].get_msg(i);
+        if (message_ptr == 0)
+        {
+          flag = 1;
+        }
+        else
+        {
+        flag = i;
+        }
       }
-      std::cout << chatroom_list[pos].msg_size() << std::endl;
       
       message_ptr = chatroom_list[pos].msg_size();
-      chat_message msg = convert_to("REQTEXT " + ret_value);
-      deliver(msg);
+      std::string time = timeStamp();
+      std::string check_sum = std::to_string(getChecksum("REQTEXT,"+ret_value));
+      chat_message msg = convert_to(check_sum + "," +"REQTEXT," + ret_value);
+      if (flag >= 1)
+      {
+        deliver(msg);
+      }
       std::cout<<"REQTEXT ran successfully"<<'\n';
   }else if(cmd.compare("REQUSERS")==0){  
       std::string ret_value;  
@@ -311,8 +353,10 @@ public:
       {
         ret_value += chatroom_list[num].get_user(i) + '\n';
       }
-      ret_value = "REQUSERS " + ret_value;
-      chat_message msg = convert_to(ret_value);
+      ret_value = "REQUSERS," + ret_value;
+      std::string time = timeStamp();
+      std::string check_sum = std::to_string(getChecksum("REQUSERS,"+ret_value));
+      chat_message msg = convert_to(check_sum + "," + time + "," + "REQUSERS," + ret_value);
       deliver(msg);
       std::cout<<"REQUSERS ran successfully"<<'\n';
   }else{

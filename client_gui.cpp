@@ -127,11 +127,11 @@ static void cb_recv ( std::string S )
   // are made.  (like show() .... )
   std::string T = S + '\n' + '\0';
 std::cout << "here\n";
-if(S.substr(0,5).compare("NICK ")==0)
+if(S.find("NICK") != std::string::npos)
 {
 }
             
-if(S.substr(0,14).compare("SENDTEXT ")==0)
+if(S.substr(0,14).compare("SENDTEXT,")==0)
 {
   T = S.substr(10, S.length()-10) + '\n' + '\0';
   lastsent = T;
@@ -145,50 +145,64 @@ if(S.substr(0,14).compare("SENDTEXT ")==0)
   }
   input1.value(NULL);
 }  
-if(S.substr(0,12).compare("REQCHATROOM ")==0)
+if(S.find("REQCHATROOM,") != std::string::npos)
 {
   r_name.value(NULL);
-  r_name.value(S.substr(12, S.length()-12).c_str());
+  std::string m = S.substr(S.find(',')).erase(0,1);
+  m = m.substr(m.find(',')).erase(0,1);
+  m = m.substr(m.find(',')).erase(0,1);
+
+  r_name.value(m.c_str());
 }
-if(S.substr(0,13).compare("REQCHATROOMS ")==0)
+if(S.find("REQCHATROOMS,") != std::string::npos)
 {
-  while(S.find("REQCHATROOMS ") != std::string::npos)
-  {
-    int p = S.find("REQCHATROOMS ");
-    S.erase(p, 13);
-  }
+ 
   rooms.value(NULL);
-  rooms.value(S.c_str());
+  std::string m = S.substr(S.find(',')).erase(0,1);
+  m = m.substr(m.find(',')).erase(0,1);
+  m = m.substr(m.find(',')).erase(0,1);
+  std::cout << "The name of the rooms is " << m << std::endl;
+  rooms.value(m.c_str());
   
 }
-if(S.substr(0,13).compare("NAMECHATROOM ")==0)
+if(S.find("NAMECHATROOM,") != std::string::npos)
 {
 }
-if(S.substr(0,15).compare("CHANGECHATROOM ")==0)
+if(S.find("CHANGECHATROOM,") != std::string::npos)
 {
 }
-if(S.substr(0,9).compare("REQUSERS ")==0)
+if(S.find("REQUSERS,") != std::string::npos)
 {
-  while(S.find("NICK ") != std::string::npos)
+ /* while(S.find("NICK ") != std::string::npos)
   {
     int i = S.find("NICK ");
     S.erase(i, 5);
-  }
-  users.value(S.substr(9,S.length()-9).c_str());
+  }*/
+  std::string m = S.substr(S.find(',')).erase(0,1);
+  m = m.substr(m.find(',')).erase(0,1);
+  m = m.substr(m.find(',')).erase(0,1);
+  m = m.substr(m.find(',')).erase(0,1);
+  users.value(m.c_str());
 }
-if(S.substr(0,8).compare("REQTEXT ")==0)
+if(S.find("REQTEXT") != std::string::npos)
 {
   std::string m;
   //int n = S.rfind("NICK ");
-  if(S.length()>=13)
-  {
-    m = T.substr(9, T.length()-9);
+  //if(S.length()>=13)
+  //{
+  //  m = T.substr(9, T.length()-9);
     //m = T;
-  }
-  else
-  {
-    m = T.substr(8, T.length()-8);
-  }
+  //}
+  //else
+  //{
+  //  m = T.substr(8, T.length()-8);
+  //}
+  m = S.substr(S.find(',')).erase(0,1);
+  //std::string time = m.substr(0,m.find(','));
+  //m = m.substr(m.find(',')).erase(0,1);
+  m = m.substr(m.find(',')).erase(0,1);
+  //m = time + m;
+  //m = T;
   if((m.length()>2)&&(m.compare(lastsent)!=0))
   {
     lastsent = m;
@@ -222,7 +236,7 @@ static void cb_new()
   u_name.value(NULL);
   login.hide();
   std::string n(input2.value());
-  std::string str = "NICK "+ n;
+  std::string str = "NICK,"+ n;
         //get checksum of command only
         int cksum = getChecksum(str);
         //append time to front  
@@ -439,7 +453,7 @@ int main ( int argc, char** argv )
     t = new std::thread ([&io_service](){ io_service.run(); });
 
     // goes here, never to return.....
-    Fl::add_timeout(1.0, (Fl_Timeout_Handler)requ);
+    Fl::add_timeout(0.8, (Fl_Timeout_Handler)requ);
     return Fl::run ();
   }
   catch (std::exception& e)

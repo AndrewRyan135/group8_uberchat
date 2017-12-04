@@ -8,6 +8,7 @@
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
 
+#include <fstream>
 #include <cstdlib>
 #include <deque>
 #include <iostream>
@@ -261,6 +262,5 @@ int main(int argc, char* argv[])
   {
     std::cerr << "Exception: " << e.what() << "\n";
   }
-
   return 0;
 }

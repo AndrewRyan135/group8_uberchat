@@ -27,7 +27,7 @@ char line[chat_message::max_body_length + 1];
 
 
 
-Fl_Window chat   (1000, 600, "UberChat");
+Fl_Window chat   (1000, 700, "UberChat");
 Fl_Output r_name (450, 25, 100, 25, "Chatroom Name");
 Fl_Output u_name (700, 25, 100, 25, "Username");
 Fl_Input input1 (250, 400, 600, 25, "Message: ");
@@ -35,8 +35,9 @@ Fl_Button create (50, 20, 150, 50, "Create Chatroom");
 Fl_Button join (50, 90, 150, 50, "Join Chatroom");
 Fl_Multiline_Output users (50, 160, 100, 200, "Users");
 Fl_Button nick (50, 450, 100, 50, "Change Nick");
-Fl_Button quit  (50, 520, 50,20,"Quit");
-Fl_Button clear (50, 560, 50,20,"Clear");
+Fl_Button u (50, 510, 50, 20, "UUID");
+Fl_Button quit  (50, 560, 50,20,"Quit");
+Fl_Button clear (50, 620, 50,20,"Clear");
 Fl_Text_Buffer *buff = new Fl_Text_Buffer ();
 Fl_Text_Display *disp = new Fl_Text_Display (250,100,600,250,"chat");
 
@@ -57,15 +58,40 @@ Fl_Window c_nick (250, 100, "Change Nick");
 Fl_Input input5 (100, 20, 100, 25, "New Nick");
 Fl_Button Change (100, 50, 50, 25, "Submit");
 
+Fl_Window uuid (250, 150, "UUID");
+Fl_Output UUID(50, 38, 100, 25, "UUID");
+Fl_Button ret(50, 70, 50, 25, "Return");
+
 
 chat_client *c = NULL;
 std::thread *t = NULL;
 std::string lastsent;
 
+static void s_uuid()
+{
+	std::string str = "REQUUID";
+	int cksum = getChecksum(str);
+	str = appendInt(str, getTime());
+	str = appendInt(str, cksum);
+	strcpy(line, str.c_str());
+	chat_message msg;
+	msg.body_length(std::strlen(line));
+	std::memcpy(msg.body(), line, msg.body_length());
+	msg.encode_header();
+	c->write(msg);
+	strcpy(line, "\0");
+	uuid.show();
+}
+
+static void r_uuid()
+{
+  	uuid.hide();
+}
+
 void requ()
 {
-std::string str = "REQUSERS";
-  int cksum = getChecksum(str);
+	std::string str = "REQUSERS";
+ 	int cksum = getChecksum(str);
         //append time to front  
         str = appendInt(str, getTime());
         //append checksum to front
@@ -88,7 +114,7 @@ std::string str = "REQUSERS";
       	std::memcpy(msg.body(), line, msg.body_length());
       	msg.encode_header();
 	c->write(msg);
-	Fl::repeat_timeout(1, (Fl_Timeout_Handler)requ);
+	Fl::repeat_timeout(.05, (Fl_Timeout_Handler)requ);
 }
 
 
@@ -99,7 +125,7 @@ static void cb_cnick()
 	u_name.value(NULL);
 	c_nick.hide();
 	std::string n(input5.value());
-	std::string str = "NICK " + n;
+	std::string str = "NICK," + n;
         int cksum = getChecksum(str);
         //append time to front  
         str = appendInt(str, getTime());
@@ -125,15 +151,22 @@ static void cb_recv ( std::string S )
   //
   // high chance of a lock needed here if certain fltk calls
   // are made.  (like show() .... )
-  std::string T = S + '\n' + '\0';
-std::cout << "here\n";
-if(S.substr(0,5).compare("NICK ")==0)
+  std::string T = S;
+  int pos;
+if(S.find("REQUUID,") != std::string::npos)
+{
+  pos = S.rfind("REQUUID,");
+  UUID.value(NULL);
+  UUID.value(S.substr(pos+8, S.length()-(pos+8)).c_str());
+}
+if(S.find("NICK,") != std::string::npos)
 {
 }
             
-if(S.substr(0,9).compare("SENDTEXT ")==0)
+if(S.find("SENDTEXT,") != std::string::npos)
 {
-  T = S.substr(14, S.length()-14) + '\n' + '\0';
+  pos = S.rfind("SENDTEXT,");
+  T = S.substr(pos+10, S.length()-(pos+10)) + '\n';
   lastsent = T;
   if (buff)
   {
@@ -145,51 +178,54 @@ if(S.substr(0,9).compare("SENDTEXT ")==0)
   }
   input1.value(NULL);
 }  
-if(S.substr(0,12).compare("REQCHATROOM ")==0)
+if(S.find("REQCHATROOM,") != std::string::npos)
 {
+  pos = S.rfind("REQCHATROOM,");
   r_name.value(NULL);
-  r_name.value(S.substr(12, S.length()-12).c_str());
+  r_name.value(S.substr(pos+12, S.length()-(pos+12)).c_str());
 }
-if(S.substr(0,13).compare("REQCHATROOMS ")==0)
+if(S.find("REQCHATROOMS,") != std::string::npos)
 {
-  while(S.find("REQCHATROOMS ") != std::string::npos)
-  {
-    int p = S.find("REQCHATROOMS ");
-    S.erase(p, 13);
-  }
-  rooms.value(NULL);
-  rooms.value(S.c_str());
+  pos = S.rfind("REQCHATROOMS,");
+  rooms.value(S.substr(pos+13,S.length()-(pos+13)).c_str());
   
 }
-if(S.substr(0,13).compare("NAMECHATROOM ")==0)
+if(S.find("NAMECHATROOM,") != std::string::npos)
 {
 }
-if(S.substr(0,15).compare("CHANGECHATROOM ")==0)
+if(S.find("CHANGECHATROOM,") != std::string::npos)
 {
 }
-if(S.substr(0,9).compare("REQUSERS ")==0)
+if(S.find("REQUSERS,") != std::string::npos)
 {
+  pos = S.rfind("REQUSERS,");
   while(S.find("NICK ") != std::string::npos)
   {
     int i = S.find("NICK ");
     S.erase(i, 5);
   }
-  users.value(S.substr(9,S.length()-9).c_str());
+  users.value(S.substr(pos+9,S.length()-(pos+9)).c_str());
 }
-if(S.substr(0,8).compare("REQTEXT ")==0)
+if(S.find("REQTEXT,") != std::string::npos)
 {
   std::string m;
-  int n = S.rfind("NICK ");
+  while(S.find("NICK,") != std::string::npos)
+  {
+    int n = S.find("NICK,");
+    S.erase(n, 5);
+  }
+  pos = S.rfind(", ");
   if(S.length()>=13)
   {
-    m = T.substr(n+5, T.length()-n+5);
+    m = T.substr(pos+2, T.length()-(pos+2));
   }
   else
   {
-    m = T.substr(8, T.length()-8);
+    m = T.substr(pos+8, T.length()-(pos+8));
   }
   if((m.length()>2)&&(m.compare(lastsent)!=0))
   {
+    std::cout << std::endl << m.length() << std::endl << lastsent.length() << std::endl;
     lastsent = m;
     if (buff)
     {
@@ -221,7 +257,7 @@ static void cb_new()
 	u_name.value(NULL);
 	login.hide();
 	std::string n(input2.value());
-	std::string str = "NICK "+ n;
+	std::string str = "NICK,"+ n;
         //get checksum of command only
         int cksum = getChecksum(str);
         //append time to front  
@@ -392,6 +428,8 @@ int main ( int argc, char** argv )
     join.callback((Fl_Callback*)cb_join);
    nick.callback((Fl_Callback*)cb_nick);
     chat.add (quit);
+    chat.add(u);
+    u.callback((Fl_Callback*) s_uuid);
     disp->buffer(buff);
   chat.end ();
 
@@ -420,6 +458,12 @@ int main ( int argc, char** argv )
 	Change.callback((Fl_Callback*) cb_cnick);
   c_room.end();
   login.show ();
+
+  uuid.begin();
+    uuid.add(UUID);
+    uuid.add(ret);
+    ret.callback((Fl_Callback*) r_uuid);
+  uuid.end();
 
   try
   {

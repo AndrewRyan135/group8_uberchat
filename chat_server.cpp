@@ -16,6 +16,8 @@
 #include <stdlib.h>
 #include <deque>
 #include <iostream>
+#include <fstream>
+#include <sstream>
 #include <list>
 #include <memory>
 #include <set>
@@ -565,6 +567,22 @@ private:
 
 int main(int argc, char* argv[])
 {
+  std::string line;
+  int i = 0;
+  int x = 0;
+  std::ifstream infile ("server_uuid.txt");
+  if (infile.is_open())
+  {
+    while (getline(infile,line))
+    {
+      std::stringstream geek(line);
+      geek >> x;
+      uuid_list.push_back(x);
+      i++;
+    }
+    infile.close();
+  }
+
   try
   {
     if (argc < 2)
@@ -580,6 +598,13 @@ int main(int argc, char* argv[])
     {
       tcp::endpoint endpoint(tcp::v4(), std::atoi(argv[i]));
       servers.emplace_back(io_service, endpoint);
+      std::ofstream myfile;
+       myfile.open("server_uuid.txt");
+        for (unsigned int i = 0; i < uuid_list.size(); i++)
+        {
+         myfile << uuid_list[i] << std::endl;
+       }
+       myfile.close();
     }
 
     io_service.run();
@@ -588,6 +613,5 @@ int main(int argc, char* argv[])
   {
     std::cerr << "Exception: " << e.what() << "\n";
   }
-
   return 0;
 }

@@ -19,6 +19,8 @@
 
 using boost::asio::ip::tcp;
 
+int flag = 0;
+int this_uuid = 0;
 typedef std::deque<chat_message> chat_message_queue;
 
 class users_info
@@ -257,6 +259,7 @@ int main(int argc, char* argv[])
 
     c.close();
     t.join();
+      
   }
   catch (std::exception& e)
   {

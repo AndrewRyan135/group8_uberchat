@@ -5,6 +5,7 @@
 //
 #include <assert.h>
 #include <iostream>
+#include <fstream>
 #include <boost/asio.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
 
@@ -27,7 +28,7 @@ char line[chat_message::max_body_length + 1];
 
 
 
-Fl_Window chat   (1000, 600, "UberChat");
+Fl_Window chat   (1000, 700, "UberChat");
 Fl_Output r_name (450, 25, 100, 25, "Chatroom Name");
 Fl_Output u_name (700, 25, 100, 25, "Username");
 Fl_Input input1 (250, 400, 600, 25, "Message: ");
@@ -35,8 +36,9 @@ Fl_Button create (50, 20, 150, 50, "Create Chatroom");
 Fl_Button join (50, 90, 150, 50, "Join Chatroom");
 Fl_Multiline_Output users (50, 160, 100, 200, "Users");
 Fl_Button nick (50, 450, 100, 50, "Change Nick");
-Fl_Button quit  (50, 520, 50,20,"Quit");
-Fl_Button clear (50, 560, 50,20,"Clear");
+Fl_Button u (50, 510, 50, 20, "UUID");
+Fl_Button quit  (50, 560, 50,20,"Quit");
+Fl_Button clear (50, 620, 50,20,"Clear");
 Fl_Text_Buffer *buff = new Fl_Text_Buffer ();
 Fl_Text_Display *disp = new Fl_Text_Display (250,100,600,250,"chat");
 
@@ -57,10 +59,37 @@ Fl_Window c_nick (250, 100, "Change Nick");
 Fl_Input input5 (100, 20, 100, 25, "New Nick");
 Fl_Button Change (100, 50, 50, 25, "Submit");
 
+Fl_Window uuid (250, 150, "UUID");
+Fl_Output UUID(50, 38, 100, 25, "UUID");
+Fl_Button ret(50, 70, 50, 25, "Return");
+
+
 
 chat_client *c = NULL;
 std::thread *t = NULL;
 std::string lastsent;
+
+static void s_uuid()
+{
+  std::string str = "REQUUID";
+  int cksum = getChecksum(str);
+  str = appendInt(str, getTime());
+  str = appendInt(str, cksum);
+  strcpy(line, str.c_str());
+  chat_message msg;
+  msg.body_length(std::strlen(line));
+  std::memcpy(msg.body(), line, msg.body_length());
+  msg.encode_header();
+  c->write(msg);
+  strcpy(line, "\0");
+  uuid.show();
+}
+
+static void r_uuid()
+{
+    uuid.hide();
+}
+
 
 void requ()
 {
@@ -88,7 +117,7 @@ std::string str = "REQUSERS";
         std::memcpy(msg.body(), line, msg.body_length());
         msg.encode_header();
   c->write(msg);
-  Fl::repeat_timeout(1, (Fl_Timeout_Handler)requ);
+  Fl::repeat_timeout(0.5, (Fl_Timeout_Handler)requ);
 }
 
 
@@ -126,7 +155,8 @@ static void cb_recv ( std::string S )
   // high chance of a lock needed here if certain fltk calls
   // are made.  (like show() .... )
   std::string T = S + '\n' + '\0';
-std::cout << "here\n";
+  //int pos;
+//std::cout << "here\n";
 if(S.find("NICK") != std::string::npos)
 {
 }
@@ -145,6 +175,22 @@ if(S.substr(0,14).compare("SENDTEXT,")==0)
   }
   input1.value(NULL);
 }  
+if(S.find("REQUUID,") != std::string::npos)
+{
+  //pos = S.rfind("REQUUID,");
+  std::string m = S.substr(S.find(',')).erase(0,1);
+  m = m.substr(m.find(',')).erase(0,1);
+  m = m.substr(m.find(',')).erase(0,1);
+  m = m.substr(m.find(',')).erase(0,1);
+  UUID.value(NULL);
+  UUID.value(m.c_str());
+  std::ofstream myfile;
+  myfile.open("user_uuid.txt");
+  
+    myfile << m << "\n";
+  
+  myfile.close();
+}
 if(S.find("REQCHATROOM,") != std::string::npos)
 {
   r_name.value(NULL);
@@ -407,6 +453,8 @@ int main ( int argc, char** argv )
     join.callback((Fl_Callback*)cb_join);
    nick.callback((Fl_Callback*)cb_nick);
     chat.add (quit);
+    chat.add(u);
+    u.callback((Fl_Callback*) s_uuid);
     disp->buffer(buff);
   chat.end ();
 
@@ -436,6 +484,12 @@ int main ( int argc, char** argv )
   c_room.end();
   login.show ();
 
+  uuid.begin();
+    uuid.add(UUID);
+    uuid.add(ret);
+    ret.callback((Fl_Callback*) r_uuid);
+  uuid.end();
+
   try
   {
     if (argc != 3)
@@ -453,7 +507,7 @@ int main ( int argc, char** argv )
     t = new std::thread ([&io_service](){ io_service.run(); });
 
     // goes here, never to return.....
-    Fl::add_timeout(0.8, (Fl_Timeout_Handler)requ);
+    Fl::add_timeout(1.0, (Fl_Timeout_Handler)requ);
     return Fl::run ();
   }
   catch (std::exception& e)

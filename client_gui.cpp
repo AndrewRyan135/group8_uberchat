@@ -88,7 +88,7 @@ std::string str = "REQUSERS";
       	std::memcpy(msg.body(), line, msg.body_length());
       	msg.encode_header();
 	c->write(msg);
-	Fl::repeat_timeout(.1, (Fl_Timeout_Handler)requ);
+	Fl::repeat_timeout(1, (Fl_Timeout_Handler)requ);
 }
 
 
@@ -133,17 +133,6 @@ if(S.substr(0,5).compare("NICK ")==0)
             
 if(S.substr(0,9).compare("SENDTEXT,")==0)
 {
-  T = S.substr(14, S.length()-14) + '\n' + '\0';
-  lastsent = T;
-  if (buff)
-  {
-    buff->append ( T.c_str() );
-  }
-  if (disp)
-  {
-    disp->show ();
-  }
-  input1.value(NULL);
 }  
 if(S.substr(0,12).compare("REQCHATROOM ")==0)
 {
@@ -158,7 +147,7 @@ if(S.substr(0,13).compare("REQCHATROOMS ")==0)
     S.erase(p, 13);
   }
   rooms.value(NULL);
-  rooms.value(S.substr(13, S.length()-13).c_str());
+  rooms.value(S.c_str());
   
 }
 if(S.substr(0,13).compare("NAMECHATROOM ")==0)
@@ -174,7 +163,6 @@ if(S.substr(0,9).compare("REQUSERS ")==0)
     int i = S.find("NICK ");
     S.erase(i, 5);
   }
-  std::cout << S << std::endl;
   users.value(S.substr(9,S.length()-9).c_str());
 }
 if(S.substr(0,8).compare("REQTEXT ")==0)
@@ -247,16 +235,6 @@ static void cb_new()
       	msg.encode_header();
 	c->write(msg);	
 	strcpy(line,"\0");
-	str = "CHANGECHATROOM Main";
-	cksum = getChecksum(str);
-	str = appendInt(str, getTime());
-        //append checksum to front
-	str = appendInt(str, cksum);
-	strcpy(line, str.c_str());
-      	msg.body_length(std::strlen(line));
-      	std::memcpy(msg.body(), line, msg.body_length());
-      	msg.encode_header();
-	c->write(msg);
 	input2.value(NULL);
 	chat.show();
 	
@@ -264,7 +242,6 @@ static void cb_new()
 
 static void cb_join()
 {
-	chat.hide();
 	std::string str = "REQCHATROOMS";
         //get checksum of command only
         int cksum = getChecksum(str);
@@ -285,13 +262,11 @@ static void cb_join()
 
 static void cb_make()
 {
-	chat.hide();
 	c_room.show();
 }
 
 static void cb_nick()
 {
-	chat.hide();
 	c_nick.show();
 }
 

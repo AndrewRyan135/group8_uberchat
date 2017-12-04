@@ -126,13 +126,24 @@ static void cb_recv ( std::string S )
   // high chance of a lock needed here if certain fltk calls
   // are made.  (like show() .... )
   std::string T = S + '\n' + '\0';
-
+std::cout << "here\n";
 if(S.substr(0,5).compare("NICK ")==0)
 {
 }
             
-if(S.substr(0,9).compare("SENDTEXT,")==0)
+if(S.substr(0,9).compare("SENDTEXT ")==0)
 {
+  T = S.substr(14, S.length()-14) + '\n' + '\0';
+  lastsent = T;
+  if (buff)
+  {
+    buff->append ( T.c_str() );
+  }
+  if (disp)
+  {
+    disp->show ();
+  }
+  input1.value(NULL);
 }  
 if(S.substr(0,12).compare("REQCHATROOM ")==0)
 {
@@ -206,6 +217,7 @@ static void cb_clear ()
 
 static void cb_new()
 {
+	std::cout << "here\n";
 	u_name.value(NULL);
 	login.hide();
 	std::string n(input2.value());

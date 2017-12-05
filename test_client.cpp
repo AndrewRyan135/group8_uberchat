@@ -8,46 +8,16 @@
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
 
-#include <fstream>
 #include <cstdlib>
 #include <deque>
 #include <iostream>
 #include <thread>
 #include <boost/asio.hpp>
 #include "chat_message.hpp"
-#include "chat_server.h"
 
 using boost::asio::ip::tcp;
 
-int flag = 0;
-int this_uuid = 0;
 typedef std::deque<chat_message> chat_message_queue;
-
-class users_info
-{
-public:
-  int get_uuid()
-  {
-    return uuid;
-  }
-  void set_uuid(int in_uuid)
-  {
-    uuid = in_uuid;
-  }
-  std::string get_nick()
-  {
-    return nick;
-  }
-  void set_nick(std::string name)
-  {
-    nick = name;
-  }
-private:
-  std::string nick;
-  int uuid;
-};
-
-users_info user;
 
 class chat_client
 {
@@ -78,9 +48,6 @@ public:
   {
     io_service_.post([this]() { socket_.close(); });
   }
-
-  //added methods starts here
-
 
 private:
   void do_connect(tcp::resolver::iterator endpoint_iterator)
@@ -120,50 +87,7 @@ private:
         {
           if (!ec)
           {
-
-            std::stringstream buffer;
-            //std::streambuf* old = std::cout.rdbuf(buffer.rdbuf());
-            buffer.write(read_msg_.body(), read_msg_.body_length());
-            //std::cout << "\n";
-            std::string text = buffer.str();
-
-            //std::cout<<"unmodified string comming back: "<<text<<'\n';
-
-            buffer.str(std::string());
-            text.erase(std::remove(text.begin(), text.end(), '\0'), text.end());
-            std::string num;
-            text = timeStamp()+" "+text;
-            /*
-            if (text.find("REQUUID") != std::string::npos)
-            {
-              num = text.substr(8,text.length()-8);
-              user.set_uuid(std::stoi(num));
-              text = text.substr(8,text.length()-8);
-              std::cout<<"modified string comming back 1: "<<text<<'\n';
-            }
-            
-            if (text.find("NICK") != std::string::npos)
-            {
-              std::string name = text.substr(14,text.length()-14);
-              user.set_nick(name);
-              text = text.substr(14,text.length()-14);
-              std::cout<<"modified string comming back 2: "<<text<<'\n';
-            }
-            */
-
-
-
-            char line[chat_message::max_body_length+1];
-            memset(line,0,sizeof(line));
-            for (unsigned int i=0; i<=text.size();i++)
-            {
-              line[i] = text[i];
-            }
-            chat_message msg;
-            msg.body_length(std::strlen(line));
-            std::memcpy(msg.body(), line, msg.body_length());
-            msg.encode_header();
-            std::cout.write(msg.body(), msg.body_length());
+            std::cout.write(read_msg_.body(), read_msg_.body_length());
             std::cout << "\n";
             do_read_header();
           }
@@ -216,54 +140,28 @@ int main(int argc, char* argv[])
     boost::asio::io_service io_service;
 
     tcp::resolver resolver(io_service);
-    auto endpoint_iterator = resolver.resolve({ argv[1], argv[2]});
+    auto endpoint_iterator = resolver.resolve({ argv[1], argv[2] });
     chat_client c(io_service, endpoint_iterator);
 
     std::thread t([&io_service](){ io_service.run(); });
+
     char line[chat_message::max_body_length + 1];
     while (std::cin.getline(line, chat_message::max_body_length + 1))
     {
-     //temp checksum and time
-      std::string str = line;
-      str = convert_OptionalCmd(str);
-
-      if (str.compare("REQUUID")==0){
-        int cksum = getChecksum(str);
-        //append time to front  
-        str = appendInt(str, getTime());
-        //append checksum to front
-        str = appendInt(str, cksum);
-      }else{      
-        //int id = user.get_uuid();
-        //get checksum of command only
-        int cksum = getChecksum(str);
-        //apend uuid to front
-        //str = appendInt(str, id);
-        //append time to front  
-        str = appendInt(str, getTime());
-        //append checksum to front
-        str = appendInt(str, cksum);
-      }
-
-      strcpy(line, str.c_str());
-      //std::cout<<"char array: "<<line<<'\n';
-
-      //original messaging without truncating "SENDTEXT"
       chat_message msg;
       msg.body_length(std::strlen(line));
       std::memcpy(msg.body(), line, msg.body_length());
       msg.encode_header();
       c.write(msg);
-       
     }
 
     c.close();
     t.join();
-      
   }
   catch (std::exception& e)
   {
     std::cerr << "Exception: " << e.what() << "\n";
   }
+
   return 0;
 }

@@ -68,7 +68,6 @@ std::string nouuid_parseCmd(std::string input){                  //Parses the co
   std::string cmd = input.substr(input.find(',')).erase(0,1); 
   //find 2nd space and start a substring at the next index
   cmd = cmd.substr(cmd.find(',')).erase(0,1);
-  std::cout<<cmd<<'\n';
   return cmd;
 }
 
@@ -78,7 +77,6 @@ std::string parseCmd(std::string input){                         //Parses the co
   //find 2nd space and start a substring at the next index
   cmd = cmd.substr(cmd.find(',')).erase(0,1);
   cmd = cmd.substr(cmd.find(',')).erase(0,1);
-  std::cout<<cmd<<'\n';
   return cmd;
 
   //std::cout<<results[2]<<'\n';

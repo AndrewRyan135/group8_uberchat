@@ -128,7 +128,7 @@ static void cb_cnick()
   u_name.value(NULL);
   c_nick.hide();
   std::string n(input5.value());
-  std::string str = "NICK " + n;
+  std::string str = "NICK," + n;
         int cksum = getChecksum(str);
         //append time to front  
         str = appendInt(str, getTime());

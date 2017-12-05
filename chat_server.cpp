@@ -148,6 +148,7 @@ public:
       //std::cout<<"NICK ran successfully"<<'\n';
       int num = 0;
       chat_message msg;
+      std::string old_nick = nick;
       nick = name;
       for (unsigned int i = 0; i < user_list.size(); i++)
       {
@@ -171,6 +172,7 @@ public:
         {
           if (chatroom_list[i].get_name().compare(room_name)==0)
           {
+            chatroom_list[i].remove_user(old_nick);
             chatroom_list[i].add_user(nick);
           }
         }
@@ -218,7 +220,6 @@ public:
       }
       if (flag == 0)
       {
-        std::cout << "This is the name of the chatroom " << cmdOption << std::endl;
         chatrooms room(cmdOption);
         chatroom_list.push_back(room);
         chatroom_names.push_back(cmdOption);
@@ -255,7 +256,6 @@ public:
               {
                 std::cout << chatroom_list[i].get_name() << " " << nick << std::endl;
                 chatroom_list[i].remove_user(nick);
-                std::cout << "After removing the user" << std::endl;
               }
             }
           }
@@ -265,7 +265,6 @@ public:
         {
           if (room_name.compare(chatroom_list[i].get_name())==0)
           {
-            std::cout << "Added " << nick << "to " << chatroom_list[i].get_name() << std::endl;
             chatroom_list[i].add_user(nick);
           }
         }
@@ -277,7 +276,6 @@ public:
         message_ptr = 0;
         deliver(msg);
       }
-      std::cout << "Changed chat rooms" << std::endl;
   }else if(cmd.substr(0,8).compare("SENDTEXT")==0){                      //SENDTXT
 
       std::cout<<"SENDTEXT ran successfully"<<'\n';
@@ -308,7 +306,6 @@ public:
       int pos = 0;
       int flag = 0;
       std::string ret_value;
-      std::cout << "First loop" << std::endl;
       for (unsigned int i = 0; i < chatroom_list.size(); i++)
       {
         if (chatroom_list[i].get_name().compare(room_name)==0)
@@ -316,8 +313,7 @@ public:
           pos = i;
           num = chatroom_list[i].msg_size();
         }
-      }  
-      std::cout << "Second loop" << "\n" << message_ptr << "\n" << num << std::endl;                            
+      }                             
       for (int i = message_ptr; i < num; i++)
       {
         ret_value += chatroom_list[pos].get_msg(i);

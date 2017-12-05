@@ -8,6 +8,7 @@
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
 
+#include <fstream>
 #include <cstdlib>
 #include <deque>
 #include <iostream>
@@ -18,6 +19,8 @@
 
 using boost::asio::ip::tcp;
 
+int flag = 0;
+int this_uuid = 0;
 typedef std::deque<chat_message> chat_message_queue;
 
 class users_info
@@ -117,26 +120,38 @@ private:
         {
           if (!ec)
           {
+
             std::stringstream buffer;
             //std::streambuf* old = std::cout.rdbuf(buffer.rdbuf());
             buffer.write(read_msg_.body(), read_msg_.body_length());
             //std::cout << "\n";
             std::string text = buffer.str();
+
+            //std::cout<<"unmodified string comming back: "<<text<<'\n';
+
             buffer.str(std::string());
             text.erase(std::remove(text.begin(), text.end(), '\0'), text.end());
             std::string num;
+            text = timeStamp()+" "+text;
+            /*
             if (text.find("REQUUID") != std::string::npos)
             {
               num = text.substr(8,text.length()-8);
               user.set_uuid(std::stoi(num));
               text = text.substr(8,text.length()-8);
+              std::cout<<"modified string comming back 1: "<<text<<'\n';
             }
+            
             if (text.find("NICK") != std::string::npos)
             {
               std::string name = text.substr(14,text.length()-14);
               user.set_nick(name);
               text = text.substr(14,text.length()-14);
+              std::cout<<"modified string comming back 2: "<<text<<'\n';
             }
+            */
+
+
 
             char line[chat_message::max_body_length+1];
             memset(line,0,sizeof(line));
@@ -201,16 +216,16 @@ int main(int argc, char* argv[])
     boost::asio::io_service io_service;
 
     tcp::resolver resolver(io_service);
-    auto endpoint_iterator = resolver.resolve({ argv[1], argv[2] });
+    auto endpoint_iterator = resolver.resolve({ argv[1], argv[2]});
     chat_client c(io_service, endpoint_iterator);
 
     std::thread t([&io_service](){ io_service.run(); });
-
     char line[chat_message::max_body_length + 1];
     while (std::cin.getline(line, chat_message::max_body_length + 1))
     {
      //temp checksum and time
       std::string str = line;
+      str = convert_OptionalCmd(str);
 
       if (str.compare("REQUUID")==0){
         int cksum = getChecksum(str);
@@ -244,13 +259,11 @@ int main(int argc, char* argv[])
 
     c.close();
     t.join();
+      
   }
   catch (std::exception& e)
   {
     std::cerr << "Exception: " << e.what() << "\n";
   }
-
   return 0;
 }
-
-

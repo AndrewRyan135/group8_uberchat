@@ -23,9 +23,9 @@ class chat_client
 {
 public:
   chat_client(boost::asio::io_service& io_service,
-      tcp::resolver::iterator endpoint_iterator,void (*data_recv) (std::string S))
+      tcp::resolver::iterator endpoint_iterator)
     : io_service_(io_service),
-      socket_(io_service),data_recv_ ( data_recv )
+      socket_(io_service)
   {
     do_connect(endpoint_iterator);
   }
@@ -87,9 +87,8 @@ private:
         {
           if (!ec)
           {
-            //std::cout.write(read_msg_.body(), read_msg_.body_length());
-      read_msg_.body()[read_msg_.body_length()] = '\0';
-      data_recv_ ( read_msg_.body() );
+            std::cout.write(read_msg_.body(), read_msg_.body_length());
+            std::cout << "\n";
             do_read_header();
           }
           else
@@ -124,12 +123,11 @@ private:
 private:
   boost::asio::io_service& io_service_;
   tcp::socket socket_;
-  void (*data_recv_) (std::string S);
   chat_message read_msg_;
   chat_message_queue write_msgs_;
 };
-#ifdef XXX
-int mainxx(int argc, char* argv[])
+
+int main(int argc, char* argv[])
 {
   try
   {
@@ -167,4 +165,3 @@ int mainxx(int argc, char* argv[])
 
   return 0;
 }
-#endif

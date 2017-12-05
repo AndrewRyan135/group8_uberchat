@@ -1,0 +1,26 @@
+
+
+------------------------------------------------------------------------------------------------------------------------------------------
+10-31-17
+                  Task List
+  1. All clients shall have their own nickname and UUID
+  2. Client shall be able to request a UUID
+  3. Client shall be able to change their nickname
+  4. Client shall be able to request the creation of a chat room with a certain name
+  5. Client shall be able to request a list of currently active chatroom
+  6. Client shall be displayed a list of currently active users and their nicks in chatroom
+  7. The server shall keep tracks of all messages.
+  8. Each chatroom shall have its own message vector ad user vector
+  9. A private chat function shall be available to chat with individual in a chatroom
+  10. Keep track of when a user leaves a chatroom and remove them from the vector
+  11. Keep track of chatrooms and remove them from the vecotr when they are deleted
+  12. A file shall be create on the server’s computer to keep track of all UUIDs
+  13. The client shall be given the option to mute a specific user.
+  14. The client shall display the previous 100 messages
+  15. The creator of a chat room shall become the admin of the chatroom
+  16. Admin shall be able to change the name of a chat room
+  17. Admin shall be able to kick a user from a chatroom.
+  18. The client shall be able to unmute a muted user.
+
+------------------------------------------------------------------------------------------------------------------------------------------
+

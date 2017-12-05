@@ -8,6 +8,7 @@
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
 
+#include <fstream>
 #include <cstdlib>
 #include <deque>
 #include <iostream>
@@ -18,6 +19,8 @@
 
 using boost::asio::ip::tcp;
 
+int flag = 0;
+int this_uuid = 0;
 typedef std::deque<chat_message> chat_message_queue;
 
 class users_info
@@ -138,9 +141,7 @@ private:
               text = text.substr(8,text.length()-8);
               std::cout<<"modified string comming back 1: "<<text<<'\n';
             }
-
             
-
             if (text.find("NICK") != std::string::npos)
             {
               std::string name = text.substr(14,text.length()-14);
@@ -258,11 +259,11 @@ int main(int argc, char* argv[])
 
     c.close();
     t.join();
+      
   }
   catch (std::exception& e)
   {
     std::cerr << "Exception: " << e.what() << "\n";
   }
-
   return 0;
 }

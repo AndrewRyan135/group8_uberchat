@@ -247,14 +247,12 @@ public:
       {
         for (unsigned int i = 0; i < chatroom_list.size(); i++)
         {
-          std::cout << chatroom_list[i].get_name() << std::endl;
           if (chatroom_list[i].get_name().compare(room_name)==0)
           {
             for (int j = 0; j < chatroom_list[i].num_users(); j++)
             {
               if (chatroom_list[i].get_user(j).compare(nick)==0)
               {
-                std::cout << chatroom_list[i].get_name() << " " << nick << std::endl;
                 chatroom_list[i].remove_user(nick);
               }
             }

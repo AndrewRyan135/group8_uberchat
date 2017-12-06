@@ -6,9 +6,13 @@
 #include <assert.h>
 #include <iostream>
 <<<<<<< HEAD
+<<<<<<< HEAD
 #include <fstream>
 =======
 >>>>>>> 8f72ca0d7da98ed3183c92619bce17115f338862
+=======
+#include <fstream>
+>>>>>>> 113ac8d9ad4e0971e1ef3ed6291dfb17f4c432f5
 #include <boost/asio.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
 
@@ -39,16 +43,22 @@ Fl_Button create (50, 20, 150, 50, "Create Chatroom");
 Fl_Button join (50, 90, 150, 50, "Join Chatroom");
 Fl_Multiline_Output users (50, 160, 100, 200, "Users");
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 113ac8d9ad4e0971e1ef3ed6291dfb17f4c432f5
 Fl_Button nick (50, 450, 100, 50, "Change Nick");
 Fl_Button u (50, 510, 50, 20, "UUID");
 Fl_Button quit  (50, 560, 50,20,"Quit");
 Fl_Button clear (50, 620, 50,20,"Clear");
+<<<<<<< HEAD
 =======
 Fl_Button u (50, 510, 50, 20, "UUID");
 Fl_Button nick (50, 450, 100, 50, "Change Nick");
 Fl_Button quit  (50, 570, 50,20,"Quit");
 Fl_Button clear (50, 630, 50,20,"Clear");
 >>>>>>> 8f72ca0d7da98ed3183c92619bce17115f338862
+=======
+>>>>>>> 113ac8d9ad4e0971e1ef3ed6291dfb17f4c432f5
 Fl_Text_Buffer *buff = new Fl_Text_Buffer ();
 Fl_Text_Display *disp = new Fl_Text_Display (250,100,600,250,"chat");
 
@@ -82,6 +92,9 @@ std::string lastsent;
 static void s_uuid()
 {
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 113ac8d9ad4e0971e1ef3ed6291dfb17f4c432f5
   std::string str = "REQUUID";
   int cksum = getChecksum(str);
   str = appendInt(str, getTime());
@@ -94,6 +107,7 @@ static void s_uuid()
   c->write(msg);
   strcpy(line, "\0");
   uuid.show();
+<<<<<<< HEAD
 =======
 	std::string str = "REQUUID";
 	int cksum = getChecksum(str);
@@ -108,15 +122,21 @@ static void s_uuid()
 	strcpy(line, "\0");
 	uuid.show();
 >>>>>>> 8f72ca0d7da98ed3183c92619bce17115f338862
+=======
+>>>>>>> 113ac8d9ad4e0971e1ef3ed6291dfb17f4c432f5
 }
 
 static void r_uuid()
 {
 <<<<<<< HEAD
+<<<<<<< HEAD
     uuid.hide();
 =======
   	uuid.hide();
 >>>>>>> 8f72ca0d7da98ed3183c92619bce17115f338862
+=======
+    uuid.hide();
+>>>>>>> 113ac8d9ad4e0971e1ef3ed6291dfb17f4c432f5
 }
 
 
@@ -147,10 +167,14 @@ std::string str = "REQUSERS";
         msg.encode_header();
   c->write(msg);
 <<<<<<< HEAD
+<<<<<<< HEAD
   Fl::repeat_timeout(0.5, (Fl_Timeout_Handler)requ);
 =======
   Fl::repeat_timeout(1, (Fl_Timeout_Handler)requ);
 >>>>>>> 8f72ca0d7da98ed3183c92619bce17115f338862
+=======
+  Fl::repeat_timeout(0.5, (Fl_Timeout_Handler)requ);
+>>>>>>> 113ac8d9ad4e0971e1ef3ed6291dfb17f4c432f5
 }
 
 
@@ -162,12 +186,16 @@ static void cb_cnick()
   c_nick.hide();
   std::string n(input5.value());
 <<<<<<< HEAD
+<<<<<<< HEAD
   std::string str = "NICK " + n;
 =======
   if((n.find(",")== std::string::npos)&&(n.length()<=10))
 {
   std::string str = "NICK," + n;
 >>>>>>> 8f72ca0d7da98ed3183c92619bce17115f338862
+=======
+  std::string str = "NICK," + n;
+>>>>>>> 113ac8d9ad4e0971e1ef3ed6291dfb17f4c432f5
         int cksum = getChecksum(str);
         //append time to front  
         str = appendInt(str, getTime());
@@ -183,6 +211,7 @@ static void cb_cnick()
   strcpy(line, "\0");
   chat.show();
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 }
 else
@@ -191,6 +220,8 @@ else
   c_nick.show();
 }
 >>>>>>> 8f72ca0d7da98ed3183c92619bce17115f338862
+=======
+>>>>>>> 113ac8d9ad4e0971e1ef3ed6291dfb17f4c432f5
   input5.value(NULL);
   
 }
@@ -204,6 +235,7 @@ static void cb_recv ( std::string S )
   // are made.  (like show() .... )
   std::string T = S + '\n' + '\0';
 <<<<<<< HEAD
+<<<<<<< HEAD
   //int pos;
 //std::cout << "here\n";
 =======
@@ -213,6 +245,10 @@ if(S.find("REQUUID,")!=std::string::npos)
   UUID.value(S.substr(pos+8, S.length()-(pos+8)).c_str());
 }
 >>>>>>> 8f72ca0d7da98ed3183c92619bce17115f338862
+=======
+  //int pos;
+//std::cout << "here\n";
+>>>>>>> 113ac8d9ad4e0971e1ef3ed6291dfb17f4c432f5
 if(S.find("NICK") != std::string::npos)
 {
 }
@@ -232,6 +268,9 @@ if(S.substr(0,14).compare("SENDTEXT,")==0)
   input1.value(NULL);
 }  
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 113ac8d9ad4e0971e1ef3ed6291dfb17f4c432f5
 if(S.find("REQUUID,") != std::string::npos)
 {
   //pos = S.rfind("REQUUID,");
@@ -248,8 +287,11 @@ if(S.find("REQUUID,") != std::string::npos)
   
   myfile.close();
 }
+<<<<<<< HEAD
 =======
 >>>>>>> 8f72ca0d7da98ed3183c92619bce17115f338862
+=======
+>>>>>>> 113ac8d9ad4e0971e1ef3ed6291dfb17f4c432f5
 if(S.find("REQCHATROOM,") != std::string::npos)
 {
   r_name.value(NULL);
@@ -338,10 +380,14 @@ static void cb_clear ()
 static void cb_new()
 {
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 113ac8d9ad4e0971e1ef3ed6291dfb17f4c432f5
   std::cout << "here\n";
   u_name.value(NULL);
   login.hide();
   std::string n(input2.value());
+<<<<<<< HEAD
 =======
   u_name.value(NULL);
   login.hide();
@@ -349,6 +395,8 @@ static void cb_new()
   if((n.find(",")== std::string::npos)&&(n.length()<=10))
 {
 >>>>>>> 8f72ca0d7da98ed3183c92619bce17115f338862
+=======
+>>>>>>> 113ac8d9ad4e0971e1ef3ed6291dfb17f4c432f5
   std::string str = "NICK,"+ n;
         //get checksum of command only
         int cksum = getChecksum(str);
@@ -378,6 +426,7 @@ static void cb_new()
   input2.value(NULL);
   chat.show();
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 }
 else
@@ -386,6 +435,8 @@ else
   login.show();
 }
 >>>>>>> 8f72ca0d7da98ed3183c92619bce17115f338862
+=======
+>>>>>>> 113ac8d9ad4e0971e1ef3ed6291dfb17f4c432f5
   
 }
 
@@ -529,6 +580,7 @@ int main ( int argc, char** argv )
     join.callback((Fl_Callback*)cb_join);
    nick.callback((Fl_Callback*)cb_nick);
 <<<<<<< HEAD
+<<<<<<< HEAD
     chat.add (quit);
     chat.add(u);
     u.callback((Fl_Callback*) s_uuid);
@@ -537,6 +589,11 @@ int main ( int argc, char** argv )
     u.callback((Fl_Callback*) s_uuid);
     chat.add (quit);
 >>>>>>> 8f72ca0d7da98ed3183c92619bce17115f338862
+=======
+    chat.add (quit);
+    chat.add(u);
+    u.callback((Fl_Callback*) s_uuid);
+>>>>>>> 113ac8d9ad4e0971e1ef3ed6291dfb17f4c432f5
     disp->buffer(buff);
   chat.end ();
 
@@ -590,10 +647,14 @@ int main ( int argc, char** argv )
 
     // goes here, never to return.....
 <<<<<<< HEAD
+<<<<<<< HEAD
     Fl::add_timeout(1.0, (Fl_Timeout_Handler)requ);
 =======
     Fl::add_timeout(0.8, (Fl_Timeout_Handler)requ);
 >>>>>>> 8f72ca0d7da98ed3183c92619bce17115f338862
+=======
+    Fl::add_timeout(1.0, (Fl_Timeout_Handler)requ);
+>>>>>>> 113ac8d9ad4e0971e1ef3ed6291dfb17f4c432f5
     return Fl::run ();
   }
   catch (std::exception& e)
@@ -603,8 +664,12 @@ int main ( int argc, char** argv )
   // never gets here
   return 0;
 <<<<<<< HEAD
+<<<<<<< HEAD
 }
 =======
 }
 
 >>>>>>> 8f72ca0d7da98ed3183c92619bce17115f338862
+=======
+}
+>>>>>>> 113ac8d9ad4e0971e1ef3ed6291dfb17f4c432f5

@@ -17,10 +17,15 @@
 #include <deque>
 #include <iostream>
 <<<<<<< HEAD
+<<<<<<< HEAD
 #include <fstream>
 #include <sstream>
 =======
 >>>>>>> 8f72ca0d7da98ed3183c92619bce17115f338862
+=======
+#include <fstream>
+#include <sstream>
+>>>>>>> 113ac8d9ad4e0971e1ef3ed6291dfb17f4c432f5
 #include <list>
 #include <memory>
 #include <set>
@@ -41,28 +46,40 @@ typedef std::deque<chat_message> chat_message_queue;
 std::string ExecCmd(std::string cmd);
 int requuid_handle();
 <<<<<<< HEAD
+<<<<<<< HEAD
 void invalid_operation(std::string input);
 class chatrooms;
 class chat_participant ;
 =======
 class chatrooms;
 >>>>>>> 8f72ca0d7da98ed3183c92619bce17115f338862
+=======
+void invalid_operation(std::string input);
+class chatrooms;
+class chat_participant ;
+>>>>>>> 113ac8d9ad4e0971e1ef3ed6291dfb17f4c432f5
 
 std::vector<std::string> chatroom_names;
 std::vector<chatrooms> chatroom_list;
 std::vector<std::string> user_list;
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 113ac8d9ad4e0971e1ef3ed6291dfb17f4c432f5
 std::vector<int> uuid_list;
 //----------------------------------------------------------------------
 
 class chatrooms                                                               //Contains the chatrooms information and all the methods needed to proper keep the room uptodate and
 {                                                                             //function properly.                                                                    
+<<<<<<< HEAD
 =======
 //----------------------------------------------------------------------
 
 class chatrooms                             
 {
 >>>>>>> 8f72ca0d7da98ed3183c92619bce17115f338862
+=======
+>>>>>>> 113ac8d9ad4e0971e1ef3ed6291dfb17f4c432f5
 public:
   chatrooms(std::string in_name) : name(in_name) {}
   void message_backlog(std::string message) //read from the vector from the last element to the first element
@@ -80,10 +97,14 @@ public:
   void add_user(std::string name)
   {
 <<<<<<< HEAD
+<<<<<<< HEAD
       chatroom_users.push_back(name);
 =======
     chatroom_users.push_back(name);
 >>>>>>> 8f72ca0d7da98ed3183c92619bce17115f338862
+=======
+      chatroom_users.push_back(name);
+>>>>>>> 113ac8d9ad4e0971e1ef3ed6291dfb17f4c432f5
   }
   void remove_user(std::string name)
   {
@@ -122,16 +143,22 @@ private:
 };
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 class chat_participant                                                       //Holds the information protaining to the user and also contains the fuction that will process all the commands
 {                                                                            //since the information needed is stored here so it allows for less code to recieve this data.
 =======
 class chat_participant
 {
 >>>>>>> 8f72ca0d7da98ed3183c92619bce17115f338862
+=======
+class chat_participant                                                       //Holds the information protaining to the user and also contains the fuction that will process all the commands
+{                                                                            //since the information needed is stored here so it allows for less code to recieve this data.
+>>>>>>> 113ac8d9ad4e0971e1ef3ed6291dfb17f4c432f5
 public:
   chat_participant()
   {
     uuid = requuid_handle();
+<<<<<<< HEAD
 <<<<<<< HEAD
     room_name = "the lobby";
     //std::cout << "UUID " << uuid << " Chat room " << room_name << std::endl;
@@ -141,6 +168,11 @@ public:
     std::cout << "UUID " << uuid << " Chat room " << room_name << std::endl;
     index = 0;
 >>>>>>> 8f72ca0d7da98ed3183c92619bce17115f338862
+=======
+    room_name = "the lobby";
+    //std::cout << "UUID " << uuid << " Chat room " << room_name << std::endl;
+    message_ptr = 0;
+>>>>>>> 113ac8d9ad4e0971e1ef3ed6291dfb17f4c432f5
   }
   ~chat_participant() {}
   virtual void deliver(const chat_message& msg) = 0;
@@ -166,6 +198,9 @@ public:
   if(cmd == "REQUUID"){
       std::string num = std::to_string(uuid);
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 113ac8d9ad4e0971e1ef3ed6291dfb17f4c432f5
       num = "REQUUID," + num;
       std::string time = timeStamp();
       std::string check_sum = std::to_string(getChecksum(time+","+"REQUUID,"+num));
@@ -178,6 +213,10 @@ public:
       //std::cout<<"NICK ran successfully"<<'\n';
       int num = 0;
       chat_message msg;
+<<<<<<< HEAD
+=======
+      std::string old_nick = nick;
+>>>>>>> 113ac8d9ad4e0971e1ef3ed6291dfb17f4c432f5
       nick = name;
       for (unsigned int i = 0; i < user_list.size(); i++)
       {
@@ -201,6 +240,10 @@ public:
         {
           if (chatroom_list[i].get_name().compare(room_name)==0)
           {
+<<<<<<< HEAD
+=======
+            chatroom_list[i].remove_user(old_nick);
+>>>>>>> 113ac8d9ad4e0971e1ef3ed6291dfb17f4c432f5
             chatroom_list[i].add_user(nick);
           }
         }
@@ -215,6 +258,7 @@ public:
       std::string time = timeStamp();
       std::string check_sum = std::to_string(getChecksum(time+","+"REQCHATROOM,"+room_name));
       chat_message ret_value = convert_to(check_sum + "," + time + "," + "REQCHATROOM," + room_name);
+<<<<<<< HEAD
 =======
       num = "REQUUID " + num;
       chat_message msg = convert_to(num);
@@ -240,6 +284,8 @@ public:
   }else if(cmd.compare("REQCHATROOM")==0){
       chat_message ret_value = convert_to("REQCHATROOM " + room_name);
 >>>>>>> 8f72ca0d7da98ed3183c92619bce17115f338862
+=======
+>>>>>>> 113ac8d9ad4e0971e1ef3ed6291dfb17f4c432f5
       deliver(ret_value);
 
   }else if(cmd.compare("REQCHATROOMS")==0){
@@ -255,6 +301,9 @@ public:
           ret_value = ret_value + "      " + chatroom_names[i] + "\n";
         }
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 113ac8d9ad4e0971e1ef3ed6291dfb17f4c432f5
         std::string time = timeStamp();
         std::string check_sum = std::to_string(getChecksum(time+","+"REQCHATROOMS,"+ret_value));
         chat_message msg = convert_to(check_sum + "," + time + "," + "REQCHATROOMS," + ret_value);
@@ -274,7 +323,10 @@ public:
       }
       if (flag == 0)
       {
+<<<<<<< HEAD
         std::cout << "This is the name of the chatroom " << cmdOption << std::endl;
+=======
+>>>>>>> 113ac8d9ad4e0971e1ef3ed6291dfb17f4c432f5
         chatrooms room(cmdOption);
         chatroom_list.push_back(room);
         chatroom_names.push_back(cmdOption);
@@ -284,6 +336,7 @@ public:
       {
         ret_value = "NAMECHATROOM Name already exists, please enter a new name";
       }
+<<<<<<< HEAD
 =======
         ret_value = "REQCHATROOMS " + ret_value;
         chat_message msg = convert_to(ret_value);
@@ -299,12 +352,17 @@ public:
       std::string ret_value = "Created " + cmdOption;
       ret_value = "NAMECHATROOM " + ret_value;
 >>>>>>> 8f72ca0d7da98ed3183c92619bce17115f338862
+=======
+>>>>>>> 113ac8d9ad4e0971e1ef3ed6291dfb17f4c432f5
       chat_message msg = convert_to(ret_value);
       deliver(msg);
 
   }else if(cmd.substr(0,14).compare("CHANGECHATROOM")==0){
       std::string name = cmd.substr(15,cmd.length()-15);
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 113ac8d9ad4e0971e1ef3ed6291dfb17f4c432f5
       int flag = 0;
       for (unsigned int i = 0; i < chatroom_list.size(); i++)
       {
@@ -318,16 +376,23 @@ public:
       {
         for (unsigned int i = 0; i < chatroom_list.size(); i++)
         {
+<<<<<<< HEAD
           std::cout << chatroom_list[i].get_name() << std::endl;
+=======
+>>>>>>> 113ac8d9ad4e0971e1ef3ed6291dfb17f4c432f5
           if (chatroom_list[i].get_name().compare(room_name)==0)
           {
             for (int j = 0; j < chatroom_list[i].num_users(); j++)
             {
               if (chatroom_list[i].get_user(j).compare(nick)==0)
               {
+<<<<<<< HEAD
                 std::cout << chatroom_list[i].get_name() << " " << nick << std::endl;
                 chatroom_list[i].remove_user(nick);
                 std::cout << "After removing the user" << std::endl;
+=======
+                chatroom_list[i].remove_user(nick);
+>>>>>>> 113ac8d9ad4e0971e1ef3ed6291dfb17f4c432f5
               }
             }
           }
@@ -337,7 +402,10 @@ public:
         {
           if (room_name.compare(chatroom_list[i].get_name())==0)
           {
+<<<<<<< HEAD
             std::cout << "Added " << nick << "to " << chatroom_list[i].get_name() << std::endl;
+=======
+>>>>>>> 113ac8d9ad4e0971e1ef3ed6291dfb17f4c432f5
             chatroom_list[i].add_user(nick);
           }
         }
@@ -349,6 +417,7 @@ public:
         message_ptr = 0;
         deliver(msg);
       }
+<<<<<<< HEAD
       std::cout << "Changed chat rooms" << std::endl;
   }else if(cmd.substr(0,8).compare("SENDTEXT")==0){                      //SENDTXT
 =======
@@ -382,15 +451,23 @@ public:
       std::cout << "Changed chat rooms" << std::endl;
   }else if(cmd.substr(0,9).compare("SENDTEXT,")==0){                      //SENDTXT
 >>>>>>> 8f72ca0d7da98ed3183c92619bce17115f338862
+=======
+  }else if(cmd.substr(0,8).compare("SENDTEXT")==0){                      //SENDTXT
+>>>>>>> 113ac8d9ad4e0971e1ef3ed6291dfb17f4c432f5
 
       std::cout<<"SENDTEXT ran successfully"<<'\n';
       std::string cmdOption = cmd.substr(9,cmd.length()-9);
       cmdOption = nick + ": " + cmdOption; 
 <<<<<<< HEAD
+<<<<<<< HEAD
       cmdOption = " " + cmdOption;
       std::string time_1 = timeStamp() + ",";
 =======
 >>>>>>> 8f72ca0d7da98ed3183c92619bce17115f338862
+=======
+      cmdOption = " " + cmdOption;
+      std::string time_1 = timeStamp() + ",";
+>>>>>>> 113ac8d9ad4e0971e1ef3ed6291dfb17f4c432f5
       if(cmdOption.find(";") != std::string::npos){
         std::cout<<"Error! Message cannot contain ';' in it"<<'\n';   
       }
@@ -401,6 +478,9 @@ public:
           if (chatroom_list[i].get_name().compare(room_name)==0)
           {
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 113ac8d9ad4e0971e1ef3ed6291dfb17f4c432f5
             chatroom_list[i].message_backlog(time_1 + cmdOption + "\n");
           }
         }
@@ -415,6 +495,7 @@ public:
       int pos = 0;
       int flag = 0;
       std::string ret_value;
+<<<<<<< HEAD
       std::cout << "First loop" << std::endl;
 =======
             chatroom_list[i].message_backlog(cmdOption);
@@ -428,6 +509,8 @@ public:
       int pos;
       std::string ret_value;
 >>>>>>> 8f72ca0d7da98ed3183c92619bce17115f338862
+=======
+>>>>>>> 113ac8d9ad4e0971e1ef3ed6291dfb17f4c432f5
       for (unsigned int i = 0; i < chatroom_list.size(); i++)
       {
         if (chatroom_list[i].get_name().compare(room_name)==0)
@@ -436,8 +519,12 @@ public:
           num = chatroom_list[i].msg_size();
         }
 <<<<<<< HEAD
+<<<<<<< HEAD
       }  
       std::cout << "Second loop" << "\n" << message_ptr << "\n" << num << std::endl;                            
+=======
+      }                             
+>>>>>>> 113ac8d9ad4e0971e1ef3ed6291dfb17f4c432f5
       for (int i = message_ptr; i < num; i++)
       {
         ret_value += chatroom_list[pos].get_msg(i);
@@ -459,6 +546,7 @@ public:
       {
         deliver(msg);
       }
+<<<<<<< HEAD
 =======
       }                               
       for (int i = index; i < num; i++)
@@ -468,6 +556,8 @@ public:
       chat_message msg = convert_to("REQTEXT " + ret_value);
       deliver(msg);
 >>>>>>> 8f72ca0d7da98ed3183c92619bce17115f338862
+=======
+>>>>>>> 113ac8d9ad4e0971e1ef3ed6291dfb17f4c432f5
       std::cout<<"REQTEXT ran successfully"<<'\n';
   }else if(cmd.compare("REQUSERS")==0){  
       std::string ret_value;  
@@ -485,14 +575,20 @@ public:
         ret_value += chatroom_list[num].get_user(i) + '\n';
       }
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 113ac8d9ad4e0971e1ef3ed6291dfb17f4c432f5
       ret_value = "REQUSERS," + ret_value;
       std::string time = timeStamp();
       std::string check_sum = std::to_string(getChecksum("REQUSERS,"+ret_value));
       chat_message msg = convert_to(check_sum + "," + time + "," + "REQUSERS," + ret_value);
+<<<<<<< HEAD
 =======
       ret_value = "REQUSERS " + ret_value;
       chat_message msg = convert_to(ret_value);
 >>>>>>> 8f72ca0d7da98ed3183c92619bce17115f338862
+=======
+>>>>>>> 113ac8d9ad4e0971e1ef3ed6291dfb17f4c432f5
       deliver(msg);
       std::cout<<"REQUSERS ran successfully"<<'\n';
   }else{
@@ -506,10 +602,14 @@ private:
   int uuid;
   std::string nick;
 <<<<<<< HEAD
+<<<<<<< HEAD
   int message_ptr;
 =======
   int index;
 >>>>>>> 8f72ca0d7da98ed3183c92619bce17115f338862
+=======
+  int message_ptr;
+>>>>>>> 113ac8d9ad4e0971e1ef3ed6291dfb17f4c432f5
 };
 
 typedef std::shared_ptr<chat_participant> chat_participant_ptr;
@@ -577,17 +677,23 @@ private:
           {
             std::string text = convert_from(read_msg_);
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 113ac8d9ad4e0971e1ef3ed6291dfb17f4c432f5
             std::cout << text << std::endl;
             std::string cksum = parseChecksum(text);
             std::string value;
 
             //int test = check_cksum(cksum, value); //return 1 if checksum not verified
 
+<<<<<<< HEAD
 =======
             //std::cout << text << std::endl;
             std::string cksum = parseChecksum(text);
             std::string value;
 >>>>>>> 8f72ca0d7da98ed3183c92619bce17115f338862
+=======
+>>>>>>> 113ac8d9ad4e0971e1ef3ed6291dfb17f4c432f5
             if (text.find("REQUUID") != std::string::npos)
             {
               value = nouuid_parseCmd(text);
@@ -597,6 +703,9 @@ private:
               value = nouuid_parseCmd(text);
             }
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 113ac8d9ad4e0971e1ef3ed6291dfb17f4c432f5
 
             switch(check_cksum(cksum, value)){
               case 0:
@@ -612,12 +721,15 @@ private:
                 break;
             }
 
+<<<<<<< HEAD
 =======
             //int test = check_cksum(cksum, value);
             self->ExecCmd(value);
 
             do_read_header();
 >>>>>>> 8f72ca0d7da98ed3183c92619bce17115f338862
+=======
+>>>>>>> 113ac8d9ad4e0971e1ef3ed6291dfb17f4c432f5
           }
           else
           {
@@ -667,6 +779,7 @@ public:
       socket_(io_service)
   {
 <<<<<<< HEAD
+<<<<<<< HEAD
     chatrooms room("the lobby");
     chatroom_list.push_back(room);
     chatroom_names.push_back("the lobby");
@@ -675,6 +788,11 @@ public:
     chatroom_list.push_back(room);
     chatroom_names.push_back("Main");
 >>>>>>> 8f72ca0d7da98ed3183c92619bce17115f338862
+=======
+    chatrooms room("the lobby");
+    chatroom_list.push_back(room);
+    chatroom_names.push_back("the lobby");
+>>>>>>> 113ac8d9ad4e0971e1ef3ed6291dfb17f4c432f5
     do_accept();
   }
 
@@ -700,10 +818,14 @@ private:
 //----------------------------------------------------------------------
 
 <<<<<<< HEAD
+<<<<<<< HEAD
   int requuid_handle()                                                                //Provides a uuid when requested
 =======
   int requuid_handle()
 >>>>>>> 8f72ca0d7da98ed3183c92619bce17115f338862
+=======
+  int requuid_handle()                                                                //Provides a uuid when requested
+>>>>>>> 113ac8d9ad4e0971e1ef3ed6291dfb17f4c432f5
   {
     bool val = false;
     int num = 0000;
@@ -712,10 +834,14 @@ private:
       srand(time(NULL));
       num = rand()%1000000000;
 <<<<<<< HEAD
+<<<<<<< HEAD
       if (std::find(uuid_list.begin(), uuid_list.end(), num) != uuid_list.end())
 =======
       if (std::find(uuid_vector.begin(), uuid_vector.end(), num) != uuid_vector.end())
 >>>>>>> 8f72ca0d7da98ed3183c92619bce17115f338862
+=======
+      if (std::find(uuid_list.begin(), uuid_list.end(), num) != uuid_list.end())
+>>>>>>> 113ac8d9ad4e0971e1ef3ed6291dfb17f4c432f5
       {
         
       }
@@ -724,6 +850,7 @@ private:
         val = true;
       }
     }
+<<<<<<< HEAD
 <<<<<<< HEAD
     uuid_list.push_back(num);
     return num; 
@@ -735,12 +862,20 @@ private:
   }
 
 >>>>>>> 8f72ca0d7da98ed3183c92619bce17115f338862
+=======
+    uuid_list.push_back(num);
+    return num; 
+  }
+>>>>>>> 113ac8d9ad4e0971e1ef3ed6291dfb17f4c432f5
 //--------------------------------------------------------------------------
 
 
 int main(int argc, char* argv[])
 {
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 113ac8d9ad4e0971e1ef3ed6291dfb17f4c432f5
   std::string line;
   int i = 0;
   int x = 0;
@@ -757,8 +892,11 @@ int main(int argc, char* argv[])
     infile.close();
   }
 
+<<<<<<< HEAD
 =======
 >>>>>>> 8f72ca0d7da98ed3183c92619bce17115f338862
+=======
+>>>>>>> 113ac8d9ad4e0971e1ef3ed6291dfb17f4c432f5
   try
   {
     if (argc < 2)
@@ -775,6 +913,9 @@ int main(int argc, char* argv[])
       tcp::endpoint endpoint(tcp::v4(), std::atoi(argv[i]));
       servers.emplace_back(io_service, endpoint);
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 113ac8d9ad4e0971e1ef3ed6291dfb17f4c432f5
       std::ofstream myfile;
        myfile.open("server_uuid.txt");
         for (unsigned int i = 0; i < uuid_list.size(); i++)
@@ -782,8 +923,11 @@ int main(int argc, char* argv[])
          myfile << uuid_list[i] << std::endl;
        }
        myfile.close();
+<<<<<<< HEAD
 =======
 >>>>>>> 8f72ca0d7da98ed3183c92619bce17115f338862
+=======
+>>>>>>> 113ac8d9ad4e0971e1ef3ed6291dfb17f4c432f5
     }
 
     io_service.run();
@@ -793,8 +937,11 @@ int main(int argc, char* argv[])
     std::cerr << "Exception: " << e.what() << "\n";
   }
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 
 >>>>>>> 8f72ca0d7da98ed3183c92619bce17115f338862
+=======
+>>>>>>> 113ac8d9ad4e0971e1ef3ed6291dfb17f4c432f5
   return 0;
 }

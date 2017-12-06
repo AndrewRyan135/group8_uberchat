@@ -9,9 +9,13 @@
 //
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 #include <fstream>
 =======
 >>>>>>> 8f72ca0d7da98ed3183c92619bce17115f338862
+=======
+#include <fstream>
+>>>>>>> 113ac8d9ad4e0971e1ef3ed6291dfb17f4c432f5
 #include <cstdlib>
 #include <deque>
 #include <iostream>
@@ -23,10 +27,15 @@
 using boost::asio::ip::tcp;
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 int flag = 0;
 int this_uuid = 0;
 =======
 >>>>>>> 8f72ca0d7da98ed3183c92619bce17115f338862
+=======
+int flag = 0;
+int this_uuid = 0;
+>>>>>>> 113ac8d9ad4e0971e1ef3ed6291dfb17f4c432f5
 typedef std::deque<chat_message> chat_message_queue;
 
 class users_info
@@ -222,6 +231,7 @@ int main(int argc, char* argv[])
     boost::asio::io_service io_service;
 
     tcp::resolver resolver(io_service);
+<<<<<<< HEAD
     auto endpoint_iterator = resolver.resolve({ argv[1], argv[2] });
     chat_client c(io_service, endpoint_iterator);
 
@@ -230,6 +240,12 @@ int main(int argc, char* argv[])
 =======
 
 >>>>>>> 8f72ca0d7da98ed3183c92619bce17115f338862
+=======
+    auto endpoint_iterator = resolver.resolve({ argv[1], argv[2]});
+    chat_client c(io_service, endpoint_iterator);
+
+    std::thread t([&io_service](){ io_service.run(); });
+>>>>>>> 113ac8d9ad4e0971e1ef3ed6291dfb17f4c432f5
     char line[chat_message::max_body_length + 1];
     while (std::cin.getline(line, chat_message::max_body_length + 1))
     {
@@ -270,14 +286,19 @@ int main(int argc, char* argv[])
     c.close();
     t.join();
 <<<<<<< HEAD
+<<<<<<< HEAD
       
 =======
 >>>>>>> 8f72ca0d7da98ed3183c92619bce17115f338862
+=======
+      
+>>>>>>> 113ac8d9ad4e0971e1ef3ed6291dfb17f4c432f5
   }
   catch (std::exception& e)
   {
     std::cerr << "Exception: " << e.what() << "\n";
   }
+<<<<<<< HEAD
 <<<<<<< HEAD
   return 0;
 }
@@ -286,3 +307,7 @@ int main(int argc, char* argv[])
   return 0;
 }
 >>>>>>> 8f72ca0d7da98ed3183c92619bce17115f338862
+=======
+  return 0;
+}
+>>>>>>> 113ac8d9ad4e0971e1ef3ed6291dfb17f4c432f5

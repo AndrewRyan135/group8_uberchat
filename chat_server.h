@@ -15,10 +15,14 @@
 class chatrooms;
 
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 113ac8d9ad4e0971e1ef3ed6291dfb17f4c432f5
 
 std::vector<int> uuid_vector;
 
 chat_message convert_to(std::string input)        //Converts the string input into a chat_message
+<<<<<<< HEAD
 =======
 //std::vector<chatrooms> chatrooms_list;
 std::vector<int> uuid_vector;
@@ -26,6 +30,8 @@ std::vector<int> uuid_vector;
 
 chat_message convert_to(std::string input)
 >>>>>>> 8f72ca0d7da98ed3183c92619bce17115f338862
+=======
+>>>>>>> 113ac8d9ad4e0971e1ef3ed6291dfb17f4c432f5
 {
   char line[chat_message::max_body_length +1];
   memset(line,0,sizeof(line));
@@ -41,10 +47,14 @@ chat_message convert_to(std::string input)
 }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 std::string convert_from(chat_message msg)      //Converts chat_message to a string
 =======
 std::string convert_from(chat_message msg)
 >>>>>>> 8f72ca0d7da98ed3183c92619bce17115f338862
+=======
+std::string convert_from(chat_message msg)      //Converts chat_message to a string
+>>>>>>> 113ac8d9ad4e0971e1ef3ed6291dfb17f4c432f5
 {
   std::stringstream buffer;
   buffer.write(msg.body(), msg.body_length());
@@ -56,20 +66,28 @@ std::string convert_from(chat_message msg)
 
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 std::string parseChecksum(std::string input){                   //Parses the checksum from the input string
 =======
 std::string parseChecksum(std::string input){
 >>>>>>> 8f72ca0d7da98ed3183c92619bce17115f338862
+=======
+std::string parseChecksum(std::string input){                   //Parses the checksum from the input string
+>>>>>>> 113ac8d9ad4e0971e1ef3ed6291dfb17f4c432f5
   //get everything up to first space
   std::string checksum = input.substr(0,input.find(','));
   return checksum;
 }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 int parseTime(std::string input){                               //Parses the time from the input string
 =======
 int parseTime(std::string input){
 >>>>>>> 8f72ca0d7da98ed3183c92619bce17115f338862
+=======
+int parseTime(std::string input){                               //Parses the time from the input string
+>>>>>>> 113ac8d9ad4e0971e1ef3ed6291dfb17f4c432f5
   //find first space and start a substring at the next index
   std::string temp = input.substr(input.find(',')).erase(0,1); 
   //take everything up until 2nd space and convert to int in base 10
@@ -77,10 +95,14 @@ int parseTime(std::string input){
   return time;   
 }
 <<<<<<< HEAD
+<<<<<<< HEAD
 int parseUUID(std::string input)                                 //Parses the UUID from the input string
 =======
 int parseUUID(std::string input)
 >>>>>>> 8f72ca0d7da98ed3183c92619bce17115f338862
+=======
+int parseUUID(std::string input)                                 //Parses the UUID from the input string
+>>>>>>> 113ac8d9ad4e0971e1ef3ed6291dfb17f4c432f5
 {
   std::string temp = input.substr(input.find(',')).erase(0,1);
   temp = temp.substr(temp.find(',')).erase(0,1);
@@ -88,14 +110,19 @@ int parseUUID(std::string input)
   return UUID;
 }
 <<<<<<< HEAD
+<<<<<<< HEAD
 std::string nouuid_parseCmd(std::string input){                  //Parses the command where there is no uuid passes
 =======
 std::string nouuid_parseCmd(std::string input){
 >>>>>>> 8f72ca0d7da98ed3183c92619bce17115f338862
+=======
+std::string nouuid_parseCmd(std::string input){                  //Parses the command where there is no uuid passes
+>>>>>>> 113ac8d9ad4e0971e1ef3ed6291dfb17f4c432f5
 
   std::string cmd = input.substr(input.find(',')).erase(0,1); 
   //find 2nd space and start a substring at the next index
   cmd = cmd.substr(cmd.find(',')).erase(0,1);
+<<<<<<< HEAD
   std::cout<<cmd<<'\n';
   return cmd;
 }
@@ -113,6 +140,17 @@ std::string parseCmd(std::string input){
   cmd = cmd.substr(cmd.find(',')).erase(0,1);
   cmd = cmd.substr(cmd.find(',')).erase(0,1);
   std::cout<<cmd<<'\n';
+=======
+  return cmd;
+}
+
+std::string parseCmd(std::string input){                         //Parses the command when there is a uuid provided
+
+  std::string cmd = input.substr(input.find(',')).erase(0,1); 
+  //find 2nd space and start a substring at the next index
+  cmd = cmd.substr(cmd.find(',')).erase(0,1);
+  cmd = cmd.substr(cmd.find(',')).erase(0,1);
+>>>>>>> 113ac8d9ad4e0971e1ef3ed6291dfb17f4c432f5
   return cmd;
 
   //std::cout<<results[2]<<'\n';
@@ -120,45 +158,63 @@ std::string parseCmd(std::string input){
 }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 int getTime(){                                                                          //Gets the current time
 =======
 
 int getTime(){
 >>>>>>> 8f72ca0d7da98ed3183c92619bce17115f338862
+=======
+int getTime(){                                                                          //Gets the current time
+>>>>>>> 113ac8d9ad4e0971e1ef3ed6291dfb17f4c432f5
   
   //get universal time in millisec
   boost::posix_time::ptime now = boost::posix_time::microsec_clock::universal_time();
   int time = now.time_of_day().total_milliseconds();
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 113ac8d9ad4e0971e1ef3ed6291dfb17f4c432f5
   std::string time_str = std::to_string(time);
   std::string hour = time_str.substr(0,2);
   std::string min = time_str.substr(3,4);
   std::string sec = time_str.substr(5,6);
   std::string mil = time_str.substr(7,10);
 
+<<<<<<< HEAD
 =======
   
 >>>>>>> 8f72ca0d7da98ed3183c92619bce17115f338862
+=======
+>>>>>>> 113ac8d9ad4e0971e1ef3ed6291dfb17f4c432f5
   //this bottom code will convert into time of day hr:min:sec
   //boost::posix_time::time_duration time_formated = boost::posix_time::milliseconds(time);
 
   //debugger print
   //std::cout<<std::dec<<time<<'\n';
 <<<<<<< HEAD
+<<<<<<< HEAD
   std::cout << time << " ";
 =======
   //std::cout << time << " ";
 >>>>>>> 8f72ca0d7da98ed3183c92619bce17115f338862
+=======
+  std::cout << time << " ";
+>>>>>>> 113ac8d9ad4e0971e1ef3ed6291dfb17f4c432f5
 
   return time;
 
 }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 int getChecksum(const std::string& str){                                                                  //gets the checksum for the message
 =======
 int getChecksum(const std::string& str){
 >>>>>>> 8f72ca0d7da98ed3183c92619bce17115f338862
+=======
+int getChecksum(const std::string& str){                                                                  //gets the checksum for the message
+>>>>>>> 113ac8d9ad4e0971e1ef3ed6291dfb17f4c432f5
   //crc_32_type is typedef as crc_optimal(32, 0x04C11DB7, 0xFFFFFFFF, 0xFFFFFFFF, true, true) in boost
   boost::crc_32_type cksum;
   //turn string into an array of char of data's ascii and process it
@@ -183,10 +239,14 @@ std::string appendInt(std::string input, int num){
 
 //return 0 for okay, 1 for corruption
 <<<<<<< HEAD
+<<<<<<< HEAD
 int check_cksum(std::string cksum, std::string cmd){                                        //checkes the check sum to see if it is correct
 =======
 int check_cksum(std::string cksum, std::string cmd){
 >>>>>>> 8f72ca0d7da98ed3183c92619bce17115f338862
+=======
+int check_cksum(std::string cksum, std::string cmd){                                        //checkes the check sum to see if it is correct
+>>>>>>> 113ac8d9ad4e0971e1ef3ed6291dfb17f4c432f5
   int newCksum = getChecksum(cmd);
   int expected = atoi(cksum.c_str());
   if(newCksum == expected){
@@ -200,6 +260,7 @@ int check_cksum(std::string cksum, std::string cmd){
   }
 }
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 std::string formatTime(int time_ms){
   int time_hr = (time_ms/(3600000)+6);
@@ -250,23 +311,37 @@ std::string timeStamp(){
 std::string convert_OptionalCmd(std::string input){                                         //parses the optional arguments from the input
 =======
 std::string timeStamp(){
+=======
+std::string timeStamp(){                                                                    //appends the time to a message
+>>>>>>> 113ac8d9ad4e0971e1ef3ed6291dfb17f4c432f5
   int time_ms = getTime();
   std::string hr = std::to_string(time_ms/(3600000));
   std::string min = std::to_string((time_ms%3600000)/60000);
   std::string sec = std::to_string(((time_ms%3600000)%60000)/1000);
   std::string ms = std::to_string((((time_ms%3600000)%60000)%1000));
 
+<<<<<<< HEAD
   std::string result = "Universal Time: "+hr+"hr:"+min+"min:"+sec+"."+ms+"s";
 
   //debugger print 
   //std::cout<<result<<'\n';
+=======
+  std::string result = hr+":"+min+":"+sec+"."+ms;
+
+  //debugger print 
+  std::cout<<"time: "<<result<<'\n';
+>>>>>>> 113ac8d9ad4e0971e1ef3ed6291dfb17f4c432f5
 
   return result;
 }
 
 //replace space between command and optional command if there is any
+<<<<<<< HEAD
 std::string convert_OptionalCmd(std::string input){
 >>>>>>> 8f72ca0d7da98ed3183c92619bce17115f338862
+=======
+std::string convert_OptionalCmd(std::string input){                                         //parses the optional arguments from the input
+>>>>>>> 113ac8d9ad4e0971e1ef3ed6291dfb17f4c432f5
   
   std::string output;
 
@@ -284,6 +359,10 @@ std::string convert_OptionalCmd(std::string input){
   return output;
 }
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 =======
 >>>>>>> 8f72ca0d7da98ed3183c92619bce17115f338862
+=======
+
+>>>>>>> 113ac8d9ad4e0971e1ef3ed6291dfb17f4c432f5

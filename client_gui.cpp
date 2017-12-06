@@ -127,7 +127,9 @@ static void cb_cnick()
   u_name.value(NULL);
   c_nick.hide();
   std::string n(input5.value());
-  std::string str = "NICK " + n;
+  if((n.find(",")== std::string::npos)&&(n.length()<=10))
+{
+  std::string str = "NICK," + n;
         int cksum = getChecksum(str);
         //append time to front  
         str = appendInt(str, getTime());
@@ -142,6 +144,12 @@ static void cb_cnick()
   u_name.value(n.c_str());
   strcpy(line, "\0");
   chat.show();
+}
+else
+{
+  std::cout << std::endl << "NICK must have less that 10 characters and No Commas" << std::endl;
+  c_nick.show();
+}
   input5.value(NULL);
   
 }
@@ -264,10 +272,11 @@ static void cb_clear ()
 
 static void cb_new()
 {
-  std::cout << "here\n";
   u_name.value(NULL);
   login.hide();
   std::string n(input2.value());
+  if((n.find(",")== std::string::npos)&&(n.length()<=10))
+{
   std::string str = "NICK,"+ n;
         //get checksum of command only
         int cksum = getChecksum(str);
@@ -296,6 +305,12 @@ static void cb_new()
   strcpy(line,"\0");
   input2.value(NULL);
   chat.show();
+}
+else
+{
+  std::cout << std::endl << "NICK must have less that 10 characters and No Commas" << std::endl;
+  login.show();
+}
   
 }
 

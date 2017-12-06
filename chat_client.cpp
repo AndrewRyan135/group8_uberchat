@@ -8,7 +8,10 @@
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
 
+<<<<<<< HEAD
 #include <fstream>
+=======
+>>>>>>> 8f72ca0d7da98ed3183c92619bce17115f338862
 #include <cstdlib>
 #include <deque>
 #include <iostream>
@@ -19,8 +22,11 @@
 
 using boost::asio::ip::tcp;
 
+<<<<<<< HEAD
 int flag = 0;
 int this_uuid = 0;
+=======
+>>>>>>> 8f72ca0d7da98ed3183c92619bce17115f338862
 typedef std::deque<chat_message> chat_message_queue;
 
 class users_info
@@ -220,6 +226,10 @@ int main(int argc, char* argv[])
     chat_client c(io_service, endpoint_iterator);
 
     std::thread t([&io_service](){ io_service.run(); });
+<<<<<<< HEAD
+=======
+
+>>>>>>> 8f72ca0d7da98ed3183c92619bce17115f338862
     char line[chat_message::max_body_length + 1];
     while (std::cin.getline(line, chat_message::max_body_length + 1))
     {
@@ -259,11 +269,20 @@ int main(int argc, char* argv[])
 
     c.close();
     t.join();
+<<<<<<< HEAD
       
+=======
+>>>>>>> 8f72ca0d7da98ed3183c92619bce17115f338862
   }
   catch (std::exception& e)
   {
     std::cerr << "Exception: " << e.what() << "\n";
   }
+<<<<<<< HEAD
   return 0;
 }
+=======
+
+  return 0;
+}
+>>>>>>> 8f72ca0d7da98ed3183c92619bce17115f338862

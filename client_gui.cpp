@@ -5,7 +5,10 @@
 //
 #include <assert.h>
 #include <iostream>
+<<<<<<< HEAD
 #include <fstream>
+=======
+>>>>>>> 8f72ca0d7da98ed3183c92619bce17115f338862
 #include <boost/asio.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
 
@@ -35,10 +38,17 @@ Fl_Input input1 (250, 400, 600, 25, "Message: ");
 Fl_Button create (50, 20, 150, 50, "Create Chatroom");
 Fl_Button join (50, 90, 150, 50, "Join Chatroom");
 Fl_Multiline_Output users (50, 160, 100, 200, "Users");
+<<<<<<< HEAD
 Fl_Button nick (50, 450, 100, 50, "Change Nick");
 Fl_Button u (50, 510, 50, 20, "UUID");
 Fl_Button quit  (50, 560, 50,20,"Quit");
 Fl_Button clear (50, 620, 50,20,"Clear");
+=======
+Fl_Button u (50, 510, 50, 20, "UUID");
+Fl_Button nick (50, 450, 100, 50, "Change Nick");
+Fl_Button quit  (50, 570, 50,20,"Quit");
+Fl_Button clear (50, 630, 50,20,"Clear");
+>>>>>>> 8f72ca0d7da98ed3183c92619bce17115f338862
 Fl_Text_Buffer *buff = new Fl_Text_Buffer ();
 Fl_Text_Display *disp = new Fl_Text_Display (250,100,600,250,"chat");
 
@@ -71,6 +81,7 @@ std::string lastsent;
 
 static void s_uuid()
 {
+<<<<<<< HEAD
   std::string str = "REQUUID";
   int cksum = getChecksum(str);
   str = appendInt(str, getTime());
@@ -83,11 +94,29 @@ static void s_uuid()
   c->write(msg);
   strcpy(line, "\0");
   uuid.show();
+=======
+	std::string str = "REQUUID";
+	int cksum = getChecksum(str);
+	str = appendInt(str, getTime());
+	str = appendInt(str, cksum);
+	strcpy(line, str.c_str());
+	chat_message msg;
+	msg.body_length(std::strlen(line));
+	std::memcpy(msg.body(), line, msg.body_length());
+	msg.encode_header();
+	c->write(msg);
+	strcpy(line, "\0");
+	uuid.show();
+>>>>>>> 8f72ca0d7da98ed3183c92619bce17115f338862
 }
 
 static void r_uuid()
 {
+<<<<<<< HEAD
     uuid.hide();
+=======
+  	uuid.hide();
+>>>>>>> 8f72ca0d7da98ed3183c92619bce17115f338862
 }
 
 
@@ -117,7 +146,11 @@ std::string str = "REQUSERS";
         std::memcpy(msg.body(), line, msg.body_length());
         msg.encode_header();
   c->write(msg);
+<<<<<<< HEAD
   Fl::repeat_timeout(0.5, (Fl_Timeout_Handler)requ);
+=======
+  Fl::repeat_timeout(1, (Fl_Timeout_Handler)requ);
+>>>>>>> 8f72ca0d7da98ed3183c92619bce17115f338862
 }
 
 
@@ -128,7 +161,13 @@ static void cb_cnick()
   u_name.value(NULL);
   c_nick.hide();
   std::string n(input5.value());
+<<<<<<< HEAD
   std::string str = "NICK " + n;
+=======
+  if((n.find(",")== std::string::npos)&&(n.length()<=10))
+{
+  std::string str = "NICK," + n;
+>>>>>>> 8f72ca0d7da98ed3183c92619bce17115f338862
         int cksum = getChecksum(str);
         //append time to front  
         str = appendInt(str, getTime());
@@ -143,6 +182,15 @@ static void cb_cnick()
   u_name.value(n.c_str());
   strcpy(line, "\0");
   chat.show();
+<<<<<<< HEAD
+=======
+}
+else
+{
+  std::cout << std::endl << "NICK must have less that 10 characters and No Commas" << std::endl;
+  c_nick.show();
+}
+>>>>>>> 8f72ca0d7da98ed3183c92619bce17115f338862
   input5.value(NULL);
   
 }
@@ -155,8 +203,16 @@ static void cb_recv ( std::string S )
   // high chance of a lock needed here if certain fltk calls
   // are made.  (like show() .... )
   std::string T = S + '\n' + '\0';
+<<<<<<< HEAD
   //int pos;
 //std::cout << "here\n";
+=======
+if(S.find("REQUUID,")!=std::string::npos)
+{
+  int pos = S.rfind("REQUUID,");
+  UUID.value(S.substr(pos+8, S.length()-(pos+8)).c_str());
+}
+>>>>>>> 8f72ca0d7da98ed3183c92619bce17115f338862
 if(S.find("NICK") != std::string::npos)
 {
 }
@@ -175,6 +231,7 @@ if(S.substr(0,14).compare("SENDTEXT,")==0)
   }
   input1.value(NULL);
 }  
+<<<<<<< HEAD
 if(S.find("REQUUID,") != std::string::npos)
 {
   //pos = S.rfind("REQUUID,");
@@ -191,6 +248,8 @@ if(S.find("REQUUID,") != std::string::npos)
   
   myfile.close();
 }
+=======
+>>>>>>> 8f72ca0d7da98ed3183c92619bce17115f338862
 if(S.find("REQCHATROOM,") != std::string::npos)
 {
   r_name.value(NULL);
@@ -278,10 +337,18 @@ static void cb_clear ()
 
 static void cb_new()
 {
+<<<<<<< HEAD
   std::cout << "here\n";
   u_name.value(NULL);
   login.hide();
   std::string n(input2.value());
+=======
+  u_name.value(NULL);
+  login.hide();
+  std::string n(input2.value());
+  if((n.find(",")== std::string::npos)&&(n.length()<=10))
+{
+>>>>>>> 8f72ca0d7da98ed3183c92619bce17115f338862
   std::string str = "NICK,"+ n;
         //get checksum of command only
         int cksum = getChecksum(str);
@@ -310,6 +377,15 @@ static void cb_new()
   strcpy(line,"\0");
   input2.value(NULL);
   chat.show();
+<<<<<<< HEAD
+=======
+}
+else
+{
+  std::cout << std::endl << "NICK must have less that 10 characters and No Commas" << std::endl;
+  login.show();
+}
+>>>>>>> 8f72ca0d7da98ed3183c92619bce17115f338862
   
 }
 
@@ -452,9 +528,15 @@ int main ( int argc, char** argv )
     create.callback((Fl_Callback*)cb_make);
     join.callback((Fl_Callback*)cb_join);
    nick.callback((Fl_Callback*)cb_nick);
+<<<<<<< HEAD
     chat.add (quit);
     chat.add(u);
     u.callback((Fl_Callback*) s_uuid);
+=======
+    chat.add(u);
+    u.callback((Fl_Callback*) s_uuid);
+    chat.add (quit);
+>>>>>>> 8f72ca0d7da98ed3183c92619bce17115f338862
     disp->buffer(buff);
   chat.end ();
 
@@ -507,7 +589,11 @@ int main ( int argc, char** argv )
     t = new std::thread ([&io_service](){ io_service.run(); });
 
     // goes here, never to return.....
+<<<<<<< HEAD
     Fl::add_timeout(1.0, (Fl_Timeout_Handler)requ);
+=======
+    Fl::add_timeout(0.8, (Fl_Timeout_Handler)requ);
+>>>>>>> 8f72ca0d7da98ed3183c92619bce17115f338862
     return Fl::run ();
   }
   catch (std::exception& e)
@@ -516,4 +602,9 @@ int main ( int argc, char** argv )
   }
   // never gets here
   return 0;
+<<<<<<< HEAD
 }
+=======
+}
+
+>>>>>>> 8f72ca0d7da98ed3183c92619bce17115f338862

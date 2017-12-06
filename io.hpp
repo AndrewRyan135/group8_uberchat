@@ -88,8 +88,13 @@ private:
           if (!ec)
           {
             //std::cout.write(read_msg_.body(), read_msg_.body_length());
+<<<<<<< HEAD
       read_msg_.body()[read_msg_.body_length()] = '\0';
       data_recv_ ( read_msg_.body() );
+=======
+	    read_msg_.body()[read_msg_.body_length()] = '\0';
+	    data_recv_ ( read_msg_.body() );
+>>>>>>> 8f72ca0d7da98ed3183c92619bce17115f338862
             do_read_header();
           }
           else
@@ -167,4 +172,8 @@ int mainxx(int argc, char* argv[])
 
   return 0;
 }
+<<<<<<< HEAD
 #endif
+=======
+#endif
+>>>>>>> 8f72ca0d7da98ed3183c92619bce17115f338862
